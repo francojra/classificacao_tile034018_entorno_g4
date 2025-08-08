@@ -184,3 +184,39 @@ all_samples_tile034018_entorno_g4_2b <- sits_som_clean_samples(som_map = som_clu
                                                 keep = c("clean", "analyze", "remove"))
 plot(all_samples_tile034018_entorno_g4_2b)
 summary(all_samples_tile034018_entorno_g4_2b) # Mesma quantidade de amostras balanceadas
+
+# Remover amostras ruidosas ----------------------------------------------------------------------------------------------------------------
+
+samples_clean_tile034018_entorno_g4_2b <- 
+  sits_som_clean_samples(som_cluster_tile034018_entorno_g4_2b,
+                         keep = c("clean", "analyze"))
+
+view(samples_clean_tile034018_entorno_g4_2b)
+view(samples_clean_tile034018_entorno_g4_2b$time_series)
+
+plot(samples_clean_tile034018_entorno_g4_2b)
+
+summary(samples_clean_tile034018_entorno_g4_2b) # Nova quantidade de amostras entre as classes
+
+# Ver diferenças na quantidade de amostras antes e após filtragem --------------------------------------------------------------------------
+
+summary(all_samples_tile034018_entorno_g4_2b)
+summary(samples_clean_tile034018_entorno_g4_2b) # Manteve boa proporção entre as classes
+
+# Gerar SOM dos dados sem ruídos -----------------------------------------------------------------------------------------------------------
+
+som_cluster_limpo_tile034018_entorno_g4_2b <- sits_som_map(
+  data = samples_clean_tile034018_entorno_g4_2b, # SOM feito com o nosso grupo de amostras 
+  grid_xdim = 10, # Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 10,
+  mode = "pbatch", # Gera o mesmo mapa SOM a cada run
+  distance = "dtw", # Método para calcular a distância
+  rlen = 20) # Número de iterações
+
+windows(width = 9, height = 7)
+
+plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "DBSI")
+plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "NDVI")
+plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "B11")
+plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "NDII")
+
