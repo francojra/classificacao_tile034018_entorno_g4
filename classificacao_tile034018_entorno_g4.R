@@ -97,19 +97,19 @@ cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
 ## Salvar cubo com amostras
 
 saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "cubo_samples_tile034018_entorno_g4_2b.rds") 
-cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b")
+cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b.rds")
 
 sits_bands(cubo_samples_tile034018_entorno_g4_2b)
 sits_labels(cubo_samples_tile034018_entorno_g4_2b)
 
 # Visualizar padrões de séries temporais de cada classe -------------------
 
-padroes_ts_samples_tile_034018_g4 <- sits_patterns(cubo_samples_tile_034018_g4) # Média harmônica das séries temporais com curva suavizada
-view(padroes_ts_samples_tile_034018_g4$time_series[[1]])
+padroes_ts_samples_tile034018_entorno_g4_2b <- sits_patterns(cubo_samples_tile034018_entorno_g4_2b) # Média harmônica das séries temporais com curva suavizada
+view(padroes_ts_samples_tile034018_entorno_g4_2b$time_series[[1]])
 
 ## Gráficos
 
-p <- plot(padroes_ts_samples_tile_034018_g4)
+p <- plot(padroes_ts_samples_tile034018_entorno_g4_2b)
 
 library(ggplot2)
 
@@ -122,7 +122,7 @@ p + geom_line(linewidth = 1.2) +
   theme_bw() +
   facet_wrap(~label, labeller = labeller(label = labels_personalizados))
 
-p <- ggplot(padroes_ts_samples_tile_034018_g4$time_series, 
+p <- ggplot(padroes_ts_samples_tile034018_entorno_g4_2b$time_series, 
             aes(x = time, y = values, label = label)) +
   geom_line(linewidth = 1.2) +
   theme_bw() +
@@ -150,8 +150,8 @@ p <- ggplot(padroes_ts_samples_tile_034018_g4$time_series,
 
 cubo_samples_tile034018_entorno_g4_2b_bal <- sits_reduce_imbalance(
   cubo_samples_tile034018_entorno_g4_2b,
-  n_samples_over = 170, 
-  n_samples_under = 190) 
+  n_samples_over = 200, 
+  n_samples_under = 200) 
 
 summary(cubo_samples_tile034018_entorno_g4_2b) # Nº de amostras não balanceadas
 summary(cubo_samples_tile034018_entorno_g4_2b_bal) # Nº amostras balanceadas
@@ -259,7 +259,7 @@ avaliacao_som_limpo_tile034018_entorno_g4_2b
 
 # Leitura de dados para classificação ------------------------------------------------------------------------------------------------------
 
-cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b")
+cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b.rds")
 
 # Treinar modelo Random Forest -------------------------------------------------------------------------------------------------------------
 
