@@ -117,3 +117,70 @@ p <- ggplot(padroes_ts_samples_tile_034018_g4$time_series,
     "supressao" = "Área Suprimida"
   )))
 
+# Balanceamento de amostras ----------------------------------------------------------------------------------------------------------------
+
+## A diferença entre classes cria um desequilíbrio que pode afetar negativamente o desempenho do seu
+## modelo de classificação — particularmente a capacidade do modelo de identificar corretamente a 
+## classe minoritária, que, neste caso, são as áreas sem vegetação.
+
+## Modelos supervisionados tendem a favorecer a classe majoritária durante o treinamento. 
+## Isso significa que:
+
+## - O modelo pode alcançar alta acurácia geral, mas com baixa sensibilidade/recall para a classe 
+## minoritária.
+
+## - Pode subestimar a presença de áreas sem vegetação, o que pode ser crítico dependendo da sua 
+## aplicação (ex: degradação, desmatamento, uso do solo etc.).
+
+## Reduzir desigualdade no número de classes
+
+cubo_samples_tile034018_entorno_g4_2b_bal <- sits_reduce_imbalance(
+  cubo_samples_tile034018_entorno_g4_2b,
+  n_samples_over = 170, 
+  n_samples_under = 190) 
+
+summary(cubo_samples_tile034018_entorno_g4_2b) # Nº de amostras não balanceadas
+summary(cubo_samples_tile034018_entorno_g4_2b_bal) # Nº amostras balanceadas
+
+# Gerar SOM ---------------------------------------------------------------
+
+## Definir cores das classes
+
+sits_colors_set(tibble(
+  name = c("supressao", "veg_natural"),
+  color = c("#bf812d", "#01665e")))
+
+# Clustering de séries temporais - SOM
+
+## Com balanceamento
+
+som_cluster_tile034018_entorno_g4_2b <- sits_som_map(
+  data = cubo_samples_tile034018_entorno_g4_2b_bal, # SOM feito com o nosso grupo de amostras 
+  grid_xdim = 10, # Grade eixo x. Aqui é 10 x 10 para gerar 100 neurônios
+  grid_ydim = 10, # Grade eixo y
+  distance = "dtw", # Método de calcular a distância,
+  mode = "pbatch", # Gera o mesmo mapa SOM a cada run
+  rlen = 20) # Número de iterações (quantidade de vezes que o mapa é gerado)
+
+# Gerar mapa SOM ----------------------------------------------------------
+
+view(som_cluster_tile034018_entorno_g4_2b$data) # Tabela com coordenadas, classes, id das amostras e id neurônios
+
+windows(width = 10, height = 6) # Abranger janela do windows para ver o gráfico
+
+plot(som_cluster_tile034018_entorno_g4_2b, band = "DBSI")
+plot(som_cluster_tile034018_entorno_g4_2b, band = "NDVI")
+plot(som_cluster_tile034018_entorno_g4_2b, band = "B11")
+plot(som_cluster_tile034018_entorno_g4_2b, band = "NDII")
+
+# Seleção de neurônios no SOM --------------------------------------------------------------------------------------------------------------
+
+samples_filt_tile034018_entorno_g4_2b <- som_cluster_tile034018_entorno_g4_2b$data[som_cluster_tile034018_entorno_g4_2b$data$id_neuron == 25, ]
+view(samples_filt_tile034018_entorno_g4_2b)
+
+# Detectar ruídos das amostras -------------------------------------------------------------------------------------------------------------
+
+all_samples_tile034018_entorno_g4_2b <- sits_som_clean_samples(som_map = som_cluster_tile034018_entorno_g4_2b, 
+                                                keep = c("clean", "analyze", "remove"))
+plot(all_samples_tile034018_entorno_g4_2b)
+summary(all_samples_tile034018_entorno_g4_2b) # Mesma quantidade de amostras balanceadas
