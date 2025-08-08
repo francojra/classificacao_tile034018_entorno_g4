@@ -5,11 +5,25 @@
 
 # Carregar pacotes -------------------------------------------------------------------------------------------------------------------------
 
+## Pacotes SITS
+
 library(tibble) # Pacote para visualizar tabelas
 library(sits) # Pacote para análises de séries temporais de imagens de satélite
 #library(sitsdata) # Pacote para obter conjunto de dados de amostras
 library(kohonen) # Pacote para plotar o mapa SOM
 library(randomForestExplainer) # Gerar modelo Random Forest
+
+## Pacotes para leitura da máscara
+
+library(st)
+library(sf)
+library(rstac)
+library(terra)
+library(magrittr)
+library(RColorBrewer)
+library(ggplot2)
+library(sysfonts)
+library(dplyr)
 
 # Estabelecer diretório de trabalho  -------------------------------------------------------------------------------------------------------
 
@@ -110,8 +124,6 @@ view(padroes_ts_samples_tile034018_entorno_g4_2b$time_series[[1]])
 ## Gráficos
 
 p <- plot(padroes_ts_samples_tile034018_entorno_g4_2b)
-
-library(ggplot2)
 
 labels_personalizados <- c(
   "veg_natural" = "Vegetação Natural",
@@ -281,6 +293,32 @@ saveRDS(rf_model_tile034018_entorno_g4_2b, "rf_model_tile034018_entorno_g4_2b.rd
 rf_model_tile034018_entorno_g4_2b <- readRDS("rf_model_tile034018_entorno_g4_2b.rds")
 View(rf_model_tile034018_entorno_g4_2b)
 
+# Definir máscara de desmatamento PRODES ----------------------------------
+
+## caminho da máscara de desmatamento PRODES
+mascara_34018_entorno <- sf::read_sf("mask_rec_2019_34018_entornos_dissolv.shp")
+
+view(mascara_34018_entorno)
+
+## Checando se os polígonos possuem geometrias válidas
+
+## Joga na variável "polygons" as geometrias da máscara
+polygons <- sf::st_cast(mascara_34018_entorno, "POLYGON")
+
+plot(polygons)
+
+## Checando se as geometrias são válidas
+is_valid <- sf::st_is_valid(polygons)
+
+## Joga na variável polygons tudo o que é valido
+polygons = polygons[is_valid, ]
+
+## validação
+polygons = sf::st_make_valid(mascara_34018_entorno)
+
+## Plot da máscara
+plot(mascara_34018_entorno)
+
 # Produzir mapa de probabilidades de classes -----------------------------------------------------------------------------------------------
 
 tempdir_r <- "mapa_probabilidades_tile034018_entorno"
@@ -290,7 +328,8 @@ probs_tile034018_entorno_g4_2b <- sits_classify(
   data = cubo_tile034018_entorno_g4_2b, 
   ml_model = rf_model_tile034018_entorno_g4_2b,
   multicores = 3,
-  memsize = 7,
+  memsize = 15,
+  exclusion_mask = mascara_34018_entorno,
   output_dir = tempdir_r)
 
 ## Salvar dados do cubo de probabilidades
