@@ -58,3 +58,6 @@ cubo_tile034018_entorno_ndii <- sits_apply(cube_oper_tile_ent,
 )
 
 sits_bands(cubo_tile034018_entorno_ndii)
+
+## Após os cálculos, será adicionado o índice NDII à pasta cube_operations_tile034018_entorno
+## complementando o outro índice DBSI já calculado anteriormente para todos os tiles.
