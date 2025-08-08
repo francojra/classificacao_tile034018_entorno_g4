@@ -69,6 +69,11 @@ sits_bands(cubo_tile034018_entorno_ndii)
 ## Após os cálculos, será adicionado o índice NDII à pasta cube_operations_tile034018_entorno
 ## complementando o outro índice DBSI já calculado anteriormente para todos os tiles.
 
+## Salvar cubo com novos índices para grupo 4
+
+saveRDS(cubo_tile034018_entorno_g4_2b, file = "cubo_tile034018_entorno_g4_2b.rds") 
+cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b")
+
 # Adicionar amostras ao cubo ----------------------------------------------
 
 cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
@@ -240,3 +245,29 @@ p2 + theme(axis.text = element_text(color = "black"),
            legend.position = "top", title = element_blank())
 
 avaliacao_som_limpo_tile034018_entorno_g4_2b
+
+# Classificações ---------------------------------------------------------------------------------------------------------------------------
+
+# Leitura de dados para classificação ------------------------------------------------------------------------------------------------------
+
+cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b")
+
+# Treinar modelo Random Forest -------------------------------------------------------------------------------------------------------------
+
+## Treinar modelo Random Forest das amostras limpas
+
+set.seed(03024)
+
+rf_model_tile034018_entorno_g4_2b <- sits_train(
+  samples = samples_clean_tile034018_entorno_g4_2b, 
+  ml_method = sits_rfor()) # Modelo Random Forest
+
+## Gráfico com as variávies mais importantes do modelo
+
+plot(rf_model_tile034018_entorno_g4_2b)
+
+## Salvar modelo RF
+
+saveRDS(rf_model_tile034018_entorno_g4_2b, "rf_model_tile034018_entorno_g4_2b.rds")
+rf_model_tile034018_entorno_g4_2b <- readRDS("rf_model_tile034018_entorno_g4_2b.rds")
+View(rf_model_tile034018_entorno_g4_2b)
