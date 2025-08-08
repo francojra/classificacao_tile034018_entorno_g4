@@ -63,8 +63,15 @@ cubo_tile034018_entorno_ndii <- sits_apply(cube_oper_tile_ent,
                                     progress = TRUE
 )
 
-sits_bands(cubo_tile034018_entorno_ndii)
-view(cubo_tile034018_entorno_ndii)
+cubo_tile034018_entorno_ndii_dbsi <- sits_apply(cubo_tile034018_entorno_ndii,
+                                    DBSI = ((B11 - 1) - B03) / ((B11 - 1) + B03) - NDVI,
+                                    normalized = FALSE,
+                                    output_dir = tempdir_r,
+                                    progress = TRUE
+)
+
+sits_bands(cubo_tile034018_entorno_ndii_dbsi)
+view(cubo_tile034018_entorno_ndii_dbsi)
 
 ## cubo_tile034018_entorno_g4_2b
 
@@ -73,7 +80,7 @@ view(cubo_tile034018_entorno_ndii)
 
 ## Salvar cubo com novos índices para grupo 4
 
-saveRDS(cubo_tile034018_entorno_ndii, file = "cubo_tile034018_entorno_g4_2b.rds") 
+saveRDS(cubo_tile034018_entorno_ndii_dbsi, file = "cubo_tile034018_entorno_g4_2b.rds") 
 cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b.rds")
 
 # Adicionar amostras ao cubo ----------------------------------------------
@@ -83,7 +90,7 @@ cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
   samples = "Tile_034018_amostras_classificacao123_treinadas_manual_classes_B.shp", # Arquivo shapefile do tile 034018
   label_attr = "classe_b", # Coluna que indica as classes das amostras (pontos)
   bands = c("B11", "DBSI", "NDII", "NDVI"), 
-  memsize = 7, # consumo de memória
+  memsize = 15, # consumo de memória
   multicores = 2, # Número de núcleos a serem usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 
