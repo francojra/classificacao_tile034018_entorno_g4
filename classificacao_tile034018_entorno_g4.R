@@ -271,3 +271,27 @@ plot(rf_model_tile034018_entorno_g4_2b)
 saveRDS(rf_model_tile034018_entorno_g4_2b, "rf_model_tile034018_entorno_g4_2b.rds")
 rf_model_tile034018_entorno_g4_2b <- readRDS("rf_model_tile034018_entorno_g4_2b.rds")
 View(rf_model_tile034018_entorno_g4_2b)
+
+# Produzir mapa de probabilidades de classes -----------------------------------------------------------------------------------------------
+
+tempdir_r <- "mapa_probabilidades_tile034018_entorno"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+probs_tile034018_entorno_g4_2b <- sits_classify(
+  data = cubo_tile034018_entorno_g4_2b, 
+  ml_model = rf_model_tile034018_entorno_g4_2b,
+  multicores = 3,
+  memsize = 7,
+  output_dir = tempdir_r)
+
+## Salvar dados do cubo de probabilidades
+
+saveRDS(probs_tile034018_entorno_g4_2b, file = "probs_tile034018_entorno_g4_2b.rds")
+probs_tile034018_entorno_g4_2b <- readRDS("probs_tile034018_entorno_g4_2b.rds")
+
+view(probs_tile034018_entorno_g4_2b$file_info)
+
+## Visualizar mapas de probabilidades
+
+plot(probs_tile034018_entorno_g4_2b, labels = "supressao", palette = "YlOrRd")
+plot(probs_tile034018_entorno_g4_2b, labels = "veg_natural", palette = "Greens")
