@@ -48,7 +48,8 @@ cubo_tile_034018_entorno <- readRDS("cubo_tile_034018_entorno.rds")
 ## Calcular NDII para os tiles 035018, 034017, 033018
 
 cube_oper_tile_ent <- sits_select(data = cubo_tile_034018_entorno,
-                                  tiles = c("035018", "034017", "033018"))
+                                  tiles = c("034018", "035018", 
+                                            "034017", "033018"))
 
 sits_bands(cube_oper_tile_ent)
 
@@ -63,6 +64,7 @@ cubo_tile034018_entorno_ndii <- sits_apply(cube_oper_tile_ent,
 )
 
 sits_bands(cubo_tile034018_entorno_ndii)
+view(cubo_tile034018_entorno_ndii)
 
 ## cubo_tile034018_entorno_g4_2b
 
@@ -71,8 +73,8 @@ sits_bands(cubo_tile034018_entorno_ndii)
 
 ## Salvar cubo com novos índices para grupo 4
 
-saveRDS(cubo_tile034018_entorno_g4_2b, file = "cubo_tile034018_entorno_g4_2b.rds") 
-cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b")
+saveRDS(cubo_tile034018_entorno_ndii, file = "cubo_tile034018_entorno_g4_2b.rds") 
+cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b.rds")
 
 # Adicionar amostras ao cubo ----------------------------------------------
 
