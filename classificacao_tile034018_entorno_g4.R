@@ -220,3 +220,23 @@ plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "NDVI")
 plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "B11")
 plot(som_cluster_limpo_tile034018_entorno_g4_2b, band = "NDII")
 
+# Avaliar matriz de confusão das amostras antes e após limpeza -----------------------------------------------------------------------------
+
+# Função de avaliação
+
+avaliacao_som_tile034018_entorno_g4_2b <- sits_som_evaluate_cluster(som_cluster_tile034018_entorno_g4_2b)
+avaliacao_som_limpo_tile034018_entorno_g4_2b <- sits_som_evaluate_cluster(som_cluster_limpo_tile034018_entorno_g4_2b)
+
+# Gráficos
+
+p1 <- plot(avaliacao_som_tile034018_entorno_g4_2b)
+p1 + theme(axis.text = element_text(color = "black"),
+           legend.position = "top", title = element_blank())
+
+avaliacao_som_tile034018_entorno_g4_2b
+
+p2 <- plot(avaliacao_som_limpo_tile034018_entorno_g4_2b)
+p2 + theme(axis.text = element_text(color = "black"),
+           legend.position = "top", title = element_blank())
+
+avaliacao_som_limpo_tile034018_entorno_g4_2b
