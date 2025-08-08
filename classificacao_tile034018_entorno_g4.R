@@ -59,9 +59,27 @@ cubo_tile034018_entorno_ndii <- sits_apply(cube_oper_tile_ent,
 
 sits_bands(cubo_tile034018_entorno_ndii)
 
+## cubo_tile034018_entorno_g4_2b
+
 ## Após os cálculos, será adicionado o índice NDII à pasta cube_operations_tile034018_entorno
 ## complementando o outro índice DBSI já calculado anteriormente para todos os tiles.
 
 # Adicionar amostras ao cubo ----------------------------------------------
 
+cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
+  cubo_tile034018_entorno_g4_2b, # Cubo geral com bandas e índices
+  samples = "Tile_034018_amostras_classificacao123_treinadas_manual_classes_B.shp", # Arquivo shapefile do tile 034018
+  label_attr = "classe_b", # Coluna que indica as classes das amostras (pontos)
+  bands = c("B11", "DBSI", "NDII", "NDVI"), 
+  memsize = 7, # consumo de memória
+  multicores = 2, # Número de núcleos a serem usados. Quanto maior, mais rápido o processamento
+  progress = TRUE) # Acompanhar carregamento
+
+## Salvar cubo com amostras
+
+saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "cubo_samples_tile034018_entorno_g4_2b.rds") 
+cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b")
+
+sits_bands(cubo_samples_tile034018_entorno_g4_2b)
+sits_labels(cubo_samples_tile034018_entorno_g4_2b)
 
