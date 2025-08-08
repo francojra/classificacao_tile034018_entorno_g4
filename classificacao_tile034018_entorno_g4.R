@@ -36,3 +36,23 @@ sits_bands(cubo_tile_034018_entorno)
 sits_timeline(cubo_tile_034018_entorno)
 
 view(cubo_tile_034018_entorno)
+view(cubo_tile_034018_entorno$file_info)
+
+# Calcular índice NDII ----------------------------------------------------
+
+## Calcular NDII para os tiles 035018, 034017, 033018
+
+cube_oper_tile_ent <- sits_select(data = cubo_tile_034018_entorno,
+                                  bands = c("B11", "DBSI", "NDII", "NDVI"))
+
+tempdir_r <- "cube_operations_tile034018_entorno"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+cubo_tile034018_entorno_ndii <- sits_apply(cubo_tile_034018,
+                                    NDII = (B08 - B11) / (B08 + B11),
+                                    normalized = FALSE,
+                                    output_dir = tempdir_r,
+                                    progress = TRUE
+)
+
+sits_bands(cubo_tile034018_entorno_ndii)
