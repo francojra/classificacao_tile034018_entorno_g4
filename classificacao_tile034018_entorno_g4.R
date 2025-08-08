@@ -38,6 +38,11 @@ sits_timeline(cubo_tile_034018_entorno)
 view(cubo_tile_034018_entorno)
 view(cubo_tile_034018_entorno$file_info)
 
+## Salvar cubo principal
+
+saveRDS(cubo_tile_034018_entorno, file = "cubo_tile_034018_entorno.rds") 
+cubo_tile_034018_entorno <- readRDS("cubo_tile_034018_entorno.rds")
+
 # Calcular índice NDII ----------------------------------------------------
 
 ## Calcular NDII para os tiles 035018, 034017, 033018
@@ -82,4 +87,33 @@ cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorn
 
 sits_bands(cubo_samples_tile034018_entorno_g4_2b)
 sits_labels(cubo_samples_tile034018_entorno_g4_2b)
+
+# Visualizar padrões de séries temporais de cada classe -------------------
+
+padroes_ts_samples_tile_034018_g4 <- sits_patterns(cubo_samples_tile_034018_g4) # Média harmônica das séries temporais com curva suavizada
+view(padroes_ts_samples_tile_034018_g4$time_series[[1]])
+
+## Gráficos
+
+p <- plot(padroes_ts_samples_tile_034018_g4)
+
+library(ggplot2)
+
+labels_personalizados <- c(
+  "veg_natural" = "Vegetação Natural",
+  "supressao" = "Supressão"
+)
+
+p + geom_line(linewidth = 1.2) + 
+  theme_bw() +
+  facet_wrap(~label, labeller = labeller(label = labels_personalizados))
+
+p <- ggplot(padroes_ts_samples_tile_034018_g4$time_series, 
+            aes(x = time, y = values, label = label)) +
+  geom_line(linewidth = 1.2) +
+  theme_bw() +
+  facet_wrap(~ label, labeller = labeller(label = c(
+    "veg_natural" = "Vegetação Natural",
+    "supressao" = "Área Suprimida"
+  )))
 
