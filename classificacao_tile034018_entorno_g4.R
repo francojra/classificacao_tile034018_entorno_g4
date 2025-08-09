@@ -343,3 +343,18 @@ view(probs_tile034018_entorno_g4_2b$file_info)
 
 plot(probs_tile034018_entorno_g4_2b, labels = "supressao", palette = "YlOrRd")
 plot(probs_tile034018_entorno_g4_2b, labels = "veg_natural", palette = "Greens")
+
+### É exibido apenas o primeiro tile da lista.
+
+# Unir tiles vizinhos com tile central ------------------------------------
+
+tempdir_r <- "mosaico_probabilidades_tile034018_entorno"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+mosaico_proba <- sits_mosaic(
+  data       = probs_tile034018_entorno_g4_2b,
+  output_dir = "mosaico_probabilidades_tile034018_entorno",
+  multicores = 7,
+  progress   = TRUE
+)
+
