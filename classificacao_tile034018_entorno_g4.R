@@ -318,10 +318,11 @@ polygons = sf::st_make_valid(mascara_34018_entorno)
 
 ## Plot da máscara
 plot(mascara_34018_entorno)
+plot(polygons)
 
 # Produzir mapa de probabilidades de classes -----------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_probabilidades_tile034018_entorno"
+tempdir_r <- "mapa_probabilidades_tile034018_entorno1"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 probs_tile034018_entorno_g4_2b <- sits_classify(
@@ -329,7 +330,7 @@ probs_tile034018_entorno_g4_2b <- sits_classify(
   ml_model = rf_model_tile034018_entorno_g4_2b,
   multicores = 3,
   memsize = 15,
-  exclusion_mask = mascara_34018_entorno, 
+  mask = polygons, 
   output_dir = tempdir_r)
 
 ## Salvar dados do cubo de probabilidades
