@@ -329,7 +329,7 @@ probs_tile034018_entorno_g4_2b <- sits_classify(
   ml_model = rf_model_tile034018_entorno_g4_2b,
   multicores = 3,
   memsize = 15,
-  exclusion_mask = mascara_34018_entorno,
+  exclusion_mask = mascara_34018_entorno, 
   output_dir = tempdir_r)
 
 ## Salvar dados do cubo de probabilidades
@@ -368,6 +368,8 @@ smooth_tile034018_entorno <- sits_smooth(
   output_dir = "mosaico_prob_suav_tile034018_entorno"
 )
 
+plot(smooth_tile034018_entorno)
+
 ## Salvar dados do cubo suavizado
 
 saveRDS(smooth_tile034018_entorno, file = "smooth_tile034018_entorno.rds")
@@ -384,6 +386,8 @@ map_class_tile034018_entorno <- sits_label_classification(
   memsize = 15,
   multicores = 7
 )
+
+plot(map_class_tile034018_entorno)
 
 ## Salvar dados do cubo classificado
 
