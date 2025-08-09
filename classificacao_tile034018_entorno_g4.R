@@ -369,7 +369,7 @@ smooth_tile034018_entorno <- sits_smooth(
   cube = mosaico_proba,
   multicores = 7,
   memsize = 15,
-  output_dir = "mosaico_prob_suav_tile034018_entorno1"
+  output_dir = "mosaico_prob_suav_tile034018_entorno"
 )
 
 plot(smooth_tile034018_entorno, add = TRUE, border = "red", lwd = 2)
