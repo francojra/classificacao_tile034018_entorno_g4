@@ -295,6 +295,8 @@ View(rf_model_tile034018_entorno_g4_2b)
 
 # Definir máscara de desmatamento PRODES ----------------------------------
 
+### Máscara de desmatamento
+
 ## caminho da máscara de desmatamento PRODES
 mascara_34018_entorno <- sf::read_sf("mask_rec_2019_34018_entornos_dissolv.shp")
 
@@ -322,15 +324,16 @@ plot(polygons)
 
 # Produzir mapa de probabilidades de classes -----------------------------------------------------------------------------------------------
 
-tempdir_r <- "mapa_probabilidades_tile034018_entorno1"
+tempdir_r <- "mapa_probabilidades_tile034018_entorno"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
 probs_tile034018_entorno_g4_2b <- sits_classify(
   data = cubo_tile034018_entorno_g4_2b, 
   ml_model = rf_model_tile034018_entorno_g4_2b,
-  multicores = 3,
+  multicores = 7,
   memsize = 15,
-  mask = polygons, 
+  mask = mascara_34018_entorno, 
+  exclude_mask = TRUE, # inverte a lógica, classificando apenas fora das áreas da máscara
   output_dir = tempdir_r)
 
 ## Salvar dados do cubo de probabilidades
@@ -366,10 +369,10 @@ smooth_tile034018_entorno <- sits_smooth(
   cube = mosaico_proba,
   multicores = 7,
   memsize = 15,
-  output_dir = "mosaico_prob_suav_tile034018_entorno"
+  output_dir = "mosaico_prob_suav_tile034018_entorno1"
 )
 
-plot(smooth_tile034018_entorno)
+plot(smooth_tile034018_entorno, add = TRUE, border = "red", lwd = 2)
 
 ## Salvar dados do cubo suavizado
 
@@ -394,3 +397,7 @@ plot(map_class_tile034018_entorno)
 
 saveRDS(map_class_tile034018_entorno, file = "map_class_tile034018_entorno.rds")
 map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
+
+# Adicionar máscara -------------------------------------------------------
+
+
