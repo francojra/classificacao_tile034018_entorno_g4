@@ -351,8 +351,7 @@ plot(probs_tile034018_entorno_g4_2b, labels = "veg_natural", palette = "Greens")
 tempdir_r <- "mosaico_probabilidades_tile034018_entorno"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-mosaico_proba <- sits_mosaic(
-  data       = probs_tile034018_entorno_g4_2b,
+mosaico_proba <- sits_mosaic(probs_tile034018_entorno_g4_2b,
   output_dir = "mosaico_probabilidades_tile034018_entorno",
   multicores = 7,
   progress   = TRUE
