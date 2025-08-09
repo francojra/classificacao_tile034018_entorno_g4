@@ -368,14 +368,24 @@ smooth_tile034018_entorno <- sits_smooth(
   output_dir = "mosaico_prob_suav_tile034018_entorno"
 )
 
+## Salvar dados do cubo suavizado
+
+saveRDS(smooth_tile034018_entorno, file = "smooth_tile034018_entorno.rds")
+smooth_tile034018_entorno <- readRDS("smooth_tile034018_entorno.rds")
+
 # Rotulando o cubo de probabilidades - Classificações finais de amostras -------------------------------------------------------------------
 
 tempdir_r <- "mosaico_classificado_tile034018_entorno"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-map_class_034018_g4 <- sits_label_classification(
+map_class_tile034018_entorno <- sits_label_classification(
   cube = smooth_tile034018_entorno, 
   output_dir = "mosaico_classificado_tile034018_entorno", 
   memsize = 15,
   multicores = 7
 )
+
+## Salvar dados do cubo classificado
+
+saveRDS(map_class_tile034018_entorno, file = "map_class_tile034018_entorno.rds")
+map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
