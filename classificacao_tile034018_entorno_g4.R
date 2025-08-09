@@ -339,11 +339,6 @@ probs_tile034018_entorno_g4_2b <- readRDS("probs_tile034018_entorno_g4_2b.rds")
 
 view(probs_tile034018_entorno_g4_2b$file_info)
 
-## Visualizar mapas de probabilidades
-
-plot(probs_tile034018_entorno_g4_2b, labels = "supressao", palette = "YlOrRd")
-plot(probs_tile034018_entorno_g4_2b, labels = "veg_natural", palette = "Greens")
-
 ### É exibido apenas o primeiro tile da lista.
 
 # Unir tiles vizinhos com tile central ------------------------------------
@@ -357,3 +352,18 @@ mosaico_proba <- sits_mosaic(probs_tile034018_entorno_g4_2b,
   progress   = TRUE
 )
 
+view(mosaico_proba)
+
+plot(mosaico_proba)
+
+# Suavização do mapa de probabilidades -----------------------------------------------------------------------------------------------------
+
+tempdir_r <- "mosaico_prob_suav_tile034018_entorno"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+smooth_034018_g4 <- sits_smooth(
+  cube = mosaico_proba,
+  multicores = 7,
+  memsize = 15,
+  output_dir = "mosaico_prob_suav_tile034018_entorno"
+)
