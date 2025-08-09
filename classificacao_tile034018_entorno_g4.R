@@ -361,9 +361,21 @@ plot(mosaico_proba)
 tempdir_r <- "mosaico_prob_suav_tile034018_entorno"
 dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 
-smooth_034018_g4 <- sits_smooth(
+smooth_tile034018_entorno <- sits_smooth(
   cube = mosaico_proba,
   multicores = 7,
   memsize = 15,
   output_dir = "mosaico_prob_suav_tile034018_entorno"
+)
+
+# Rotulando o cubo de probabilidades - Classificações finais de amostras -------------------------------------------------------------------
+
+tempdir_r <- "mosaico_classificado_tile034018_entorno"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+map_class_034018_g4 <- sits_label_classification(
+  cube = smooth_tile034018_entorno, 
+  output_dir = "mosaico_classificado_tile034018_entorno", 
+  memsize = 15,
+  multicores = 7
 )
