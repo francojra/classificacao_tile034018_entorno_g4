@@ -426,7 +426,7 @@ mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
 # Aplicar a máscara ao mapa de probabilidades
 # Esta função irá atribuir NA a todos os pixels que estão dentro da geometria da máscara
 
-mapa_com_mascara <- mask(mapa_probs_final, mascara_shp)
+mapa_com_mascara <- mask(mapa_probs_final, mascara_shp, inverse = TRUE)
 
 # Agora, o mapa 'mapa_com_mascara' contém os valores de probabilidade
 # apenas para as áreas fora da sua máscara.
