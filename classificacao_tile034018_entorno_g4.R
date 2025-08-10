@@ -427,7 +427,7 @@ tm_shape(mapa_class_final) +
     title = "Classes"
   ) +
   tm_shape(mascara_shp) +
-  tm_fill(col = "gray10", alpha = 0.5) +        
+  tm_fill(col = "gray10") +  # alpha = 0.5     
   tm_layout(
     legend.outside = TRUE,
     legend.title.size = 1.2,
