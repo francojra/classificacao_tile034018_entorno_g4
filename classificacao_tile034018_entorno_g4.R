@@ -377,14 +377,19 @@ map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
 
 # Carregar mapa classificado e shapefile da máscara
 
-library(raster) # para ler mapas .tif
+library(terra) # para ler mapas .tif
 library(sf) # para ler shapefiles
 
 ######### Importante estabelecer diretório antes
 
 # Carregar o seu mapa classificado (já no mosaico final)
 
-mapa_class_final <- raster("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.tif")
+mapa_class_final <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.tif")
+
+plot(mapa_class_final)
+
+unique(values(mapa_class_final)) # Verificar pixels 
+plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está fora de todos os tiles
 
 # Carregar o seu shapefile de máscara
 
@@ -401,10 +406,18 @@ mapa_df <- as.data.frame(mapa_class_final, xy = TRUE)
 view(mapa_df)
 
 ggplot() +
-  geom_raster(data = mapa_df, aes(x = x, y = y, fill = mapa_classificado)) +
-  geom_sf(data = mascara_shp, fill = NA, color = "red", linewidth = 0.6) +
-  scale_fill_viridis_d() +
+  geom_raster(data = mapa_df, aes(x = x, y = y)) +
+  geom_sf(data = mascara_shp, fill = "black", 
+          color = "black", linewidth = 0.4) +
   theme_minimal()
+
+## Visualizar mapa da máscara
+
+ggplot() +
+  geom_sf(data = mascara_shp, fill = "black",
+          color = "black") +
+  theme_minimal()
+
 
 # Adicionar máscara usando tmap (interativo ou estático) ----------------------------------------------------------------------------------------------------
 
@@ -412,9 +425,9 @@ library(tmap)
 
 tmap_mode("view") # modo interativo
 
-tm_shape(mapa_class) +
+tm_shape(mapa_class_final) +
   tm_raster(title = "Classificação") +
-  tm_shape(mask_desa) +
+  tm_shape(mascara_shp) +
   tm_borders(col = "red", lwd = 2)
 
 # Adicionar máscara com pacote terra ------------------------------------------------------------------------------------------------------------------------
