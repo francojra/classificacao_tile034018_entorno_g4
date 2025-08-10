@@ -398,57 +398,11 @@ mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
 
 plot(mascara_shp)
 
-# Adicionar máscara usando ggplot2 --------------------------------------------------------------------------------------------------------------------------
-
-# Converter raster para data.frame para criar mapa com ggplot
-
-# O ggplot2 não trabalha direto com objetos raster, então precisamos 
-# transformar o raster em um data.frame com as coordenadas e valores:
-
-df_map <- as.data.frame(mapa_class_final, xy = TRUE) |>
-  rename(class = 3)  # O valor da classe pode estar na terceira coluna, ajuste se necessário
-
-df_map
-
-## Visualizar mapa classificado no ggplot2
-
-gc() # liberar memória
-memory.limit(size = 16000) # Aumentar (ex.: para 16 GB)
-
-ggplot(df_map, aes(x = x, y = y, fill = factor(class))) +
-  geom_raster() +
-  scale_fill_viridis_d(name = "Classes") +  # cores para fatores
-  coord_equal() +
-  theme_minimal() 
-
-## Opção 2: adicionar cores específicas aos pixels do mapa classificado
-
-scale_fill_manual(
-  values = c("1" = "#003c30", "2" = "#dfc27d"),  # ajuste cores
-  labels = c("Floresta", "Campo"),  # ajuste labels
-  name = "Classes"
-)
-
-## Visualizar mapa da máscara no ggplot2
-
-ggplot() +
-  geom_sf(data = mascara_shp, fill = "black",
-          color = "black") +
-  theme_minimal()
-
-ggplot() +
-  geom_sf(data = mascara_shp, fill = "black",
-          color = "black") +
-  theme_minimal()
-
-
-# Adicionar máscara usando tmap (interativo ou estático) ----------------------------------------------------------------------------------------------------
+# Adicionar máscara usando tmap (estático) ----------------------------------------------------------------------------------------------------
 
 library(tmap)
 
-tmap_mode("view") # modo interativo
-
-tm_shape(mapa_class_final) +
+tm_plot <- tm_shape(mapa_class_final) +
   tm_raster(title = "Classificação") +
   tm_shape(mascara_shp) +
   tm_borders(col = "gray10", lwd = 1) 
@@ -482,14 +436,9 @@ mapa_plot <- mapa_com_mascara
 
 mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
 
-cores_com_mascara <- c("#bf812d", "#01665e", "#f5f5f5") 
+cores_com_mascara <- c("#a50026", "#006837", "#f5f5f5")
 
 plot(mapa_plot, col = cores_com_mascara, 
-                legend = FALSE, 
+                #legend = FALSE, 
                 axes = FALSE, box = FALSE)
 
-legend("topright",
-       legend = c("Desmatamento 2020", "Vegetação", "Máscara desmatamento PRODES"),
-       fill = cores_com_mascara,
-       border = NA,
-       bty = "n")
