@@ -402,16 +402,34 @@ plot(mascara_shp)
 
 library(tmap)
 
+### Mapa com contorno da máscara
+
 tm_shape(mapa_class_final) +
   tm_raster(
-    palette = c("#a50026", "#006837", "grey80"),   # cores para 1, 2, 3
-    labels = c("Desmatamento", "Vegetação", "Máscara PRODES"),
-    title = "Classificação"
+    palette = c("#a50026", "#006837"),  
+    labels = c("Desmatamento", "Vegetação"),
+    title = "Classes"
   ) +
   tm_shape(mascara_shp) +
   tm_borders(col = "gray10", lwd = 1) +
   tm_layout(
-    legend.outside = TRUE,                      # legenda fora do mapa
+    legend.outside = TRUE,                     
+    legend.title.size = 1.2,
+    legend.text.size = 0.9
+  )
+
+### Mapa com preenchimento da máscara
+
+tm_shape(mapa_class_final) +
+  tm_raster(
+    palette = c("#a50026", "#006837"),   
+    labels = c("Desmatamento", "Vegetação"),
+    title = "Classes"
+  ) +
+  tm_shape(mascara_shp) +
+  tm_fill(col = "gray10", alpha = 0.5) +        
+  tm_layout(
+    legend.outside = TRUE,
     legend.title.size = 1.2,
     legend.text.size = 0.9
   )
