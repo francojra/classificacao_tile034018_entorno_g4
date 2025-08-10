@@ -401,7 +401,11 @@ library(ggplot2)
 
 # Converter raster para data.frame para criar mapa com ggplot
 
-mapa_df <- as.data.frame(mapa_class_final, xy = TRUE)
+# O ggplot2 não trabalha direto com objetos raster, então precisamos 
+# transformar o raster em um data.frame com as coordenadas e valores:
+
+df_map <- as.data.frame(mapa_class_final, xy = TRUE) |>
+  rename(class = 3)  # O valor da classe pode estar na terceira coluna, ajuste se necessário
 
 view(mapa_df)
 
