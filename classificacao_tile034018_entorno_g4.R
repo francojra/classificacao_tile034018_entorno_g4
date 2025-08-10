@@ -417,6 +417,14 @@ ggplot(df_map, aes(x = x, y = y, fill = factor(class))) +
   coord_equal() +
   theme_minimal() 
 
+## Opção 2: adicionar cores específicas aos pixels do mapa classificado
+
+scale_fill_manual(
+  values = c("1" = "forestgreen", "2" = "yellow"),  # ajuste cores
+  labels = c("Floresta", "Campo"),  # ajuste labels
+  name = "Classes"
+)
+
 ## Visualizar mapa da máscara no ggplot2
 
 ggplot() +
