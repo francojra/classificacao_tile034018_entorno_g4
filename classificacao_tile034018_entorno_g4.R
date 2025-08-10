@@ -332,8 +332,8 @@ probs_tile034018_entorno_g4_2b <- sits_classify(
   ml_model = rf_model_tile034018_entorno_g4_2b,
   multicores = 7,
   memsize = 15,
-  mask = mascara_34018_entorno, 
-  exclude_mask = TRUE, # inverte a lógica, classificando apenas fora das áreas da máscara
+#  mask = mascara_34018_entorno,  o cubo ja deve estar com mosaico
+ # exclusion_mask = TRUE, # inverte a lógica, classificando apenas fora das áreas da máscara
   output_dir = tempdir_r)
 
 ## Salvar dados do cubo de probabilidades
@@ -353,12 +353,17 @@ dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
 mosaico_proba <- sits_mosaic(probs_tile034018_entorno_g4_2b,
   output_dir = "mosaico_probabilidades_tile034018_entorno",
   multicores = 7,
-  progress   = TRUE
+  progress   = TRUE, 
 )
 
 view(mosaico_proba)
 
 plot(mosaico_proba)
+
+## Salvar dados do cubo do mosaico de probabilidades
+
+saveRDS(mosaico_proba, file = "mosaico_proba_tile034018_entorno.rds")
+mosaico_proba_tile034018_entorno <- readRDS("mosaico_proba_tile034018_entorno.rds")
 
 # Suavização do mapa de probabilidades -----------------------------------------------------------------------------------------------------
 
@@ -372,7 +377,7 @@ smooth_tile034018_entorno <- sits_smooth(
   output_dir = "mosaico_prob_suav_tile034018_entorno"
 )
 
-plot(smooth_tile034018_entorno, add = TRUE, border = "red", lwd = 2)
+plot(smooth_tile034018_entorno)
 
 ## Salvar dados do cubo suavizado
 
@@ -388,7 +393,7 @@ map_class_tile034018_entorno <- sits_label_classification(
   cube = smooth_tile034018_entorno, 
   output_dir = "mosaico_classificado_tile034018_entorno", 
   memsize = 15,
-  multicores = 7
+  multicores = 7, 
 )
 
 plot(map_class_tile034018_entorno)
