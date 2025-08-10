@@ -378,7 +378,7 @@ plot(map_class_tile034018_entorno)
 saveRDS(map_class_tile034018_entorno, file = "map_class_tile034018_entorno.rds")
 map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
 
-# Adicionar máscara -------------------------------------------------------
+# Adicionar máscara -------------------------------------------------------------------------------------------------------------------------------------
 
 # Carregar mapa classificado e shapefile da máscara
 
@@ -409,7 +409,16 @@ ggplot() +
   scale_fill_viridis_d() +
   theme_minimal()
 
+# Adicionar máscara usando tmap (interativo ou estático) ----------------------------------------------------------------------------------------------------
 
+library(tmap)
+
+tmap_mode("view") # modo interativo
+
+tm_shape(mapa_class) +
+  tm_raster(title = "Classificação") +
+  tm_shape(mask_desa) +
+  tm_borders(col = "red", lwd = 2)
 
 # Adicionar máscara com pacote terra ------------------------------------------------------------------------------------------------------------------------
 
