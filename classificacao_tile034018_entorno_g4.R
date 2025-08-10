@@ -402,37 +402,30 @@ plot(mascara_shp)
 
 library(tmap)
 
-### Mapa com contorno da máscara
+# Garantir mesmo CRS e resolução
 
-tm_shape(mapa_class_final) +
+mascara_raster <- rasterize(
+  st_transform(mascara_shp, crs(mapa_class_final)),
+  mapa_class_final,
+  field = 1
+)
+
+# Definir a máscara NA como valor 3
+
+mapa_completo <- mapa_class_final
+mapa_completo[!is.na(mascara_raster)] <- 3  # 3 = máscara PRODES
+
+library(tmap)
+
+mapa_completo <- ratify(mapa_completo)  # garante que é fator/categórico
+
+tm_shape(mapa_completo) +
   tm_raster(
-    palette = c("#a50026", "#006837"),  
-    labels = c("Desmatamento", "Vegetação"),
+    palette = c("darkgreen", "red", "black"),
+    labels = c("Vegetação", "Desmatamento", "Máscara PRODES"),
     title = "Classes"
   ) +
-  tm_shape(mascara_shp) +
-  tm_borders(col = "gray10", lwd = 1) +
-  tm_layout(
-    legend.outside = TRUE,                     
-    legend.title.size = 1.2,
-    legend.text.size = 0.9
-  )
-
-### Mapa com preenchimento da máscara
-
-tm_shape(mapa_class_final) +
-  tm_raster(
-    palette = c("#a50026", "#006837"),   
-    labels = c("Desmatamento", "Vegetação"),
-    title = "Classes"
-  ) +
-  tm_shape(mascara_shp) +
-  tm_fill(col = "gray10") +  # alpha = 0.5     
-  tm_layout(
-    legend.outside = TRUE,
-    legend.title.size = 1.2,
-    legend.text.size = 0.9
-  )
+  tm_layout(legend.outside = TRUE)
 
 # Adicionar máscara com pacote terra ------------------------------------------------------------------------------------------------------------------------
 
