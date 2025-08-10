@@ -415,8 +415,6 @@ mascara_raster <- rasterize(
 mapa_completo <- mapa_class_final
 mapa_completo[!is.na(mascara_raster)] <- 3  # 3 = máscara PRODES
 
-library(tmap)
-
 mapa_completo <- ratify(mapa_completo)  # garante que é fator/categórico
 
 tm_shape(mapa_completo) +
