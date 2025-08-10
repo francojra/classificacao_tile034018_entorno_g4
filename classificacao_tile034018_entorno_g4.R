@@ -293,35 +293,6 @@ saveRDS(rf_model_tile034018_entorno_g4_2b, "rf_model_tile034018_entorno_g4_2b.rd
 rf_model_tile034018_entorno_g4_2b <- readRDS("rf_model_tile034018_entorno_g4_2b.rds")
 View(rf_model_tile034018_entorno_g4_2b)
 
-# Definir máscara de desmatamento PRODES ----------------------------------
-
-### Máscara de desmatamento
-
-## caminho da máscara de desmatamento PRODES
-mascara_34018_entorno <- sf::read_sf("mask_rec_2019_34018_entornos_dissolv.shp")
-
-view(mascara_34018_entorno)
-
-## Checando se os polígonos possuem geometrias válidas
-
-## Joga na variável "polygons" as geometrias da máscara
-polygons <- sf::st_cast(mascara_34018_entorno, "POLYGON")
-
-plot(polygons)
-
-## Checando se as geometrias são válidas
-is_valid <- sf::st_is_valid(polygons)
-
-## Joga na variável polygons tudo o que é valido
-polygons = polygons[is_valid, ]
-
-## validação
-polygons = sf::st_make_valid(mascara_34018_entorno)
-
-## Plot da máscara
-plot(mascara_34018_entorno)
-plot(polygons)
-
 # Produzir mapa de probabilidades de classes -----------------------------------------------------------------------------------------------
 
 tempdir_r <- "mapa_probabilidades_tile034018_entorno"
@@ -332,8 +303,6 @@ probs_tile034018_entorno_g4_2b <- sits_classify(
   ml_model = rf_model_tile034018_entorno_g4_2b,
   multicores = 7,
   memsize = 15,
-#  mask = mascara_34018_entorno,  o cubo ja deve estar com mosaico
- # exclusion_mask = TRUE, # inverte a lógica, classificando apenas fora das áreas da máscara
   output_dir = tempdir_r)
 
 ## Salvar dados do cubo de probabilidades
