@@ -402,10 +402,19 @@ plot(mascara_shp)
 
 library(tmap)
 
-tm_plot <- tm_shape(mapa_class_final) +
-  tm_raster(title = "Classificação") +
+tm_shape(mapa_class_final) +
+  tm_raster(
+    palette = c("#a50026", "#006837", "grey80"),   # cores para 1, 2, 3
+    labels = c("Desmatamento", "Vegetação", "Máscara PRODES"),
+    title = "Classificação"
+  ) +
   tm_shape(mascara_shp) +
-  tm_borders(col = "gray10", lwd = 1) 
+  tm_borders(col = "gray10", lwd = 1) +
+  tm_layout(
+    legend.outside = TRUE,                      # legenda fora do mapa
+    legend.title.size = 1.2,
+    legend.text.size = 0.9
+  )
 
 # Adicionar máscara com pacote terra ------------------------------------------------------------------------------------------------------------------------
 
@@ -439,6 +448,6 @@ mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
 cores_com_mascara <- c("#a50026", "#006837", "#f5f5f5")
 
 plot(mapa_plot, col = cores_com_mascara, 
-                #legend = FALSE, 
+                legend = FALSE, 
                 axes = FALSE, box = FALSE)
 
