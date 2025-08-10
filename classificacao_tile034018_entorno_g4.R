@@ -396,6 +396,12 @@ map_class_tile034018_entorno <- sits_label_classification(
   multicores = 7, 
 )
 
+## Definir cores das classes
+
+sits_colors_set(tibble(
+  name = c("supressao", "veg_natural"),
+  color = c("#dfc27d", "#003c30")))
+
 plot(map_class_tile034018_entorno)
 
 ## Salvar dados do cubo classificado
@@ -405,4 +411,25 @@ map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
 
 # Adicionar máscara -------------------------------------------------------
 
+library(raster) # para ler mapas .tif
+library(sf) # para ler shapefiles
 
+# Carregar o seu mapa classificado (já no mosaico final)
+## Necessário estabelecer diretório da imagem e depois shapefile da máscara
+
+mapa_probs_final <- raster("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.tif")
+
+# Carregar o seu shapefile de máscara
+
+mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
+
+# Aplicar a máscara ao mapa de probabilidades
+# Esta função irá atribuir NA a todos os pixels que estão dentro da geometria da máscara
+
+mapa_com_mascara <- mask(mapa_probs_final, mascara_shp)
+
+# Agora, o mapa 'mapa_com_mascara' contém os valores de probabilidade
+# apenas para as áreas fora da sua máscara.
+# As áreas da máscara terão o valor NA.
+
+plot(mapa_com_mascara)
