@@ -387,6 +387,7 @@ library(sf) # para ler shapefiles
 mapa_class_final <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.tif")
 
 plot(mapa_class_final)
+class(mapa_class_final)
 
 unique(values(mapa_class_final)) # Verificar pixels 
 plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está fora de todos os tiles
@@ -411,6 +412,9 @@ df_map
 
 ## Visualizar mapa classificado no ggplot2
 
+gc() # liberar memória
+memory.limit(size = 16000) # Aumentar (ex.: para 16 GB)
+
 ggplot(df_map, aes(x = x, y = y, fill = factor(class))) +
   geom_raster() +
   scale_fill_viridis_d(name = "Classes") +  # cores para fatores
@@ -420,12 +424,17 @@ ggplot(df_map, aes(x = x, y = y, fill = factor(class))) +
 ## Opção 2: adicionar cores específicas aos pixels do mapa classificado
 
 scale_fill_manual(
-  values = c("1" = "forestgreen", "2" = "yellow"),  # ajuste cores
+  values = c("1" = "#003c30", "2" = "#dfc27d"),  # ajuste cores
   labels = c("Floresta", "Campo"),  # ajuste labels
   name = "Classes"
 )
 
 ## Visualizar mapa da máscara no ggplot2
+
+ggplot() +
+  geom_sf(data = mascara_shp, fill = "black",
+          color = "black") +
+  theme_minimal()
 
 ggplot() +
   geom_sf(data = mascara_shp, fill = "black",
@@ -442,18 +451,42 @@ tmap_mode("view") # modo interativo
 tm_shape(mapa_class_final) +
   tm_raster(title = "Classificação") +
   tm_shape(mascara_shp) +
-  tm_borders(col = "red", lwd = 2)
+  tm_borders(col = "gray10", lwd = 1) 
 
 # Adicionar máscara com pacote terra ------------------------------------------------------------------------------------------------------------------------
 
 # Aplicar a máscara ao mapa classificado
 
+## Conferir CRS:
+
+crs(mapa_class_final)
+crs(mascara_shp)
+
+## Reprojetar a máscara para o CRS do raster
+
+mascara_shp <- st_transform(mascara_shp, crs(mapa_class_final))
+
 # Esta função irá atribuir NA a todos os pixels que estão dentro da geometria da máscara
 
-mapa_com_mascara <- mask(mapa_probs_final, mascara_shp, inverse = TRUE)
+mapa_com_mascara <- mask(mapa_class_final, mascara_shp, inverse = TRUE)
 
 # Agora, o mapa 'mapa_com_mascara' contém os valores classificados
 # apenas para as áreas fora da sua máscara.
 # As áreas da máscara terão o valor NA.
 
 plot(mapa_com_mascara)
+
+# Definir as cores para as classes
+
+mapa_plot <- mapa_com_mascara
+
+mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
+
+cores_com_mascara <- c("#003c30", "#dfc27d", "grey10")
+
+plot(mapa_plot, col = cores_com_mascara, legend = FALSE, axes = FALSE, box = FALSE)
+legend("topright",
+       legend = c("Vegetação", "Desmatamento", "Máscara PRODES"),
+       fill = cores_com_mascara,
+       border = NA,
+       bty = "n")
