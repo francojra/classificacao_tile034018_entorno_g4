@@ -415,12 +415,10 @@ mascara_raster <- rasterize(
 mapa_completo <- mapa_class_final
 mapa_completo[!is.na(mascara_raster)] <- 3  # 3 = máscara PRODES
 
-mapa_completo <- ratify(mapa_completo)  # garante que é fator/categórico
-
 tm_shape(mapa_completo) +
   tm_raster(
-    palette = c("darkgreen", "red", "black"),
-    labels = c("Vegetação", "Desmatamento", "Máscara PRODES"),
+    palette = c("#a50026", "#006837", "gray10"),
+    labels = c("Desmatamento 2020", "Vegetação natural", "Máscara PRODES de desmatamento 2000-2019"),
     title = "Classes"
   ) +
   tm_layout(legend.outside = TRUE)
