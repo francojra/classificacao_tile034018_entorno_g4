@@ -395,9 +395,9 @@ plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está
 
 mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
 
-# Adicionar máscara usando ggplot2 --------------------------------------------------------------------------------------------------------------------------
+plot(mascara_shp)
 
-library(ggplot2)
+# Adicionar máscara usando ggplot2 --------------------------------------------------------------------------------------------------------------------------
 
 # Converter raster para data.frame para criar mapa com ggplot
 
@@ -407,15 +407,17 @@ library(ggplot2)
 df_map <- as.data.frame(mapa_class_final, xy = TRUE) |>
   rename(class = 3)  # O valor da classe pode estar na terceira coluna, ajuste se necessário
 
-view(mapa_df)
+df_map
 
-ggplot() +
-  geom_raster(data = mapa_df, aes(x = x, y = y)) +
-  geom_sf(data = mascara_shp, fill = "black", 
-          color = "black", linewidth = 0.4) +
-  theme_minimal()
+## Visualizar mapa classificado no ggplot2
 
-## Visualizar mapa da máscara
+ggplot(df_map, aes(x = x, y = y, fill = factor(class))) +
+  geom_raster() +
+  scale_fill_viridis_d(name = "Classes") +  # cores para fatores
+  coord_equal() +
+  theme_minimal() 
+
+## Visualizar mapa da máscara no ggplot2
 
 ggplot() +
   geom_sf(data = mascara_shp, fill = "black",
