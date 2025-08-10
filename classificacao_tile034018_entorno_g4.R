@@ -15,15 +15,10 @@ library(randomForestExplainer) # Gerar modelo Random Forest
 
 ## Pacotes para leitura da máscara
 
+library(tidyverse)
 library(st)
 library(sf)
-library(rstac)
 library(terra)
-library(magrittr)
-library(RColorBrewer)
-library(ggplot2)
-library(sysfonts)
-library(dplyr)
 
 # Estabelecer diretório de trabalho  -------------------------------------------------------------------------------------------------------
 
@@ -403,9 +398,11 @@ library(ggplot2)
 
 mapa_df <- as.data.frame(mapa_class_final, xy = TRUE)
 
+view(mapa_df)
+
 ggplot() +
   geom_raster(data = mapa_df, aes(x = x, y = y, fill = mapa_classificado)) +
-  geom_sf(data = mask_desa, fill = NA, color = "red", linewidth = 0.6) +
+  geom_sf(data = mascara_shp, fill = NA, color = "red", linewidth = 0.6) +
   scale_fill_viridis_d() +
   theme_minimal()
 
