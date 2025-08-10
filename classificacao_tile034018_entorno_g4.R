@@ -482,11 +482,14 @@ mapa_plot <- mapa_com_mascara
 
 mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
 
-cores_com_mascara <- c("#003c30", "#dfc27d", "grey10")
+cores_com_mascara <- c("#bf812d", "#01665e", "#f5f5f5") 
 
-plot(mapa_plot, col = cores_com_mascara, legend = FALSE, axes = FALSE, box = FALSE)
+plot(mapa_plot, col = cores_com_mascara, 
+                legend = FALSE, 
+                axes = FALSE, box = FALSE)
+
 legend("topright",
-       legend = c("Vegetação", "Desmatamento", "Máscara PRODES"),
+       legend = c("Desmatamento 2020", "Vegetação", "Máscara desmatamento PRODES"),
        fill = cores_com_mascara,
        border = NA,
        bty = "n")
