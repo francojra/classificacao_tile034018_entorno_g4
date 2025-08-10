@@ -380,24 +380,46 @@ map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
 
 # Adicionar máscara -------------------------------------------------------
 
+# Carregar mapa classificado e shapefile da máscara
+
 library(raster) # para ler mapas .tif
 library(sf) # para ler shapefiles
 
-# Carregar o seu mapa classificado (já no mosaico final)
-## Necessário estabelecer diretório da imagem e depois shapefile da máscara
+######### Importante estabelecer diretório antes
 
-mapa_probs_final <- raster("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.tif")
+# Carregar o seu mapa classificado (já no mosaico final)
+
+mapa_class_final <- raster("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.tif")
 
 # Carregar o seu shapefile de máscara
 
 mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
 
-# Aplicar a máscara ao mapa de probabilidades
+# Adicionar máscara usando ggplot2 --------------------------------------------------------------------------------------------------------------------------
+
+library(ggplot2)
+
+# Converter raster para data.frame para criar mapa com ggplot
+
+mapa_df <- as.data.frame(mapa_class_final, xy = TRUE)
+
+ggplot() +
+  geom_raster(data = mapa_df, aes(x = x, y = y, fill = mapa_classificado)) +
+  geom_sf(data = mask_desa, fill = NA, color = "red", linewidth = 0.6) +
+  scale_fill_viridis_d() +
+  theme_minimal()
+
+
+
+# Adicionar máscara com pacote terra ------------------------------------------------------------------------------------------------------------------------
+
+# Aplicar a máscara ao mapa classificado
+
 # Esta função irá atribuir NA a todos os pixels que estão dentro da geometria da máscara
 
 mapa_com_mascara <- mask(mapa_probs_final, mascara_shp, inverse = TRUE)
 
-# Agora, o mapa 'mapa_com_mascara' contém os valores de probabilidade
+# Agora, o mapa 'mapa_com_mascara' contém os valores classificados
 # apenas para as áreas fora da sua máscara.
 # As áreas da máscara terão o valor NA.
 
