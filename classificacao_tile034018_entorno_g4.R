@@ -462,7 +462,7 @@ library(tmap)
 
 # Garantir mesmo CRS e resolução
 
-mascara_raster <- rasterize(
+mascara_raster <- terra::rasterize(
   st_transform(mascara_shp, crs(mapa_class_final)),
   mapa_class_final,
   field = 1
@@ -510,11 +510,11 @@ mapa_plot <- mapa_com_mascara
 
 mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
 
-cores_com_mascara <- c("#dfc27d", "#003c30")
+cores_com_mascara <- c("white", "#dfc27d", "#003c30")
 
 plot(mapa_plot, col = cores_com_mascara, 
                 legend = FALSE, 
-                axes = FALSE, box = FALSE)
+                axes = TRUE)
 
 # Adicionar máscara com Reclassificação do SITS ---------------------------
 
