@@ -605,7 +605,7 @@ plot(is.na(rmas))
 plot(rmas) # O valor de pixel 1 é a máscara
 
 # Criar uma máscara lógica onde os valores são 1 ou 2
-# r_masked <- mask(r, r %in% c(1, 2, NA), maskvalue=FALSE)
+r_masked <- mask(rmas, rmas %in% c(1, 2), maskvalue=TRUE)
 
 prodes_2020 <- sits_cube(
   source = "BDC",
@@ -616,8 +616,8 @@ prodes_2020 <- sits_cube(
                  "tile", "start_date", "end_date",
                  "band", "version"),
   bands = "class",
-  version = "v2", # Versão do mapa PRODES para não confundir com mapa classificado
-  labels = c("1" = "mascara"))
+  version = "v22", # Versão do mapa PRODES para não confundir com mapa classificado
+  labels = c("1" = "mascara", "2" = "NA")) # 
 
 view(prodes_2020$labels)
 
