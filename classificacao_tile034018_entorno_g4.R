@@ -440,6 +440,7 @@ mapa_class_final <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_class_v1.t
 
 plot(mapa_class_final)
 class(mapa_class_final)
+view(mapa_class_final)
 
 unique(values(mapa_class_final)) # Verificar pixels 
 plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está fora de todos os tiles
@@ -587,6 +588,7 @@ plot(cubo_class_2B,
      scale = 1.0)
 
 class(cubo_class_2B)
+names(cubo_class_2B)
 
 # Gerar cubo da máscara PRODES ----------------------
 
@@ -598,14 +600,25 @@ getwd()
 
 library(terra)
 
-rmas <- rast("mascara_desmatamento_prodes.tif")
+rmas <- rast("mascara_desmatamento_prodes_v22.tif")
 
 unique(values(rmas)) # Verificar pixels e máscara
 plot(is.na(rmas))
 plot(rmas) # O valor de pixel 1 é a máscara
+names(rmas)
+view(rmas)
 
 # Criar uma máscara lógica onde os valores são 1 ou 2
-r_masked <- mask(rmas, rmas %in% c(1, 2), maskvalue=TRUE)
+r_masked <- mask(rmas, rmas %in% c(1, 2))
+
+#r_mask <- subst(r, NaN, 2)
+r_masked[is.na(r_masked[])] <- 2
+
+unique(values(r_masked)) # Verificar pixels e máscara
+plot(is.na(r_masked)) # Não tem NA, porque se tornou valor 2
+plot(r_masked) # O valor de pixel 1 é a máscara e 2 é NA (sem informação)
+names(r_masked)
+view(r_masked)
 
 prodes_2020 <- sits_cube(
   source = "BDC",
