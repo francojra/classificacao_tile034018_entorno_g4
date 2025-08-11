@@ -19,6 +19,7 @@ library(tidyverse)
 library(st)
 library(sf)
 library(terra)
+library(tmap)
 
 # Estabelecer diretório de trabalho  -------------------------------------------------------------------------------------------------------
 
@@ -301,6 +302,8 @@ cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b.rds")
 
 view(cubo_tile034018_entorno_g4_2b)
 
+# Visualizar cada cubo de tile separado -----------------------------------
+
 c_033018 <- cubo_tile034018_entorno_g4_2b[1, ]
 
 view(c_033018)
@@ -447,7 +450,20 @@ mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
 
 class(mascara_shp)
 
+view(mascara_shp)
+
 plot(mascara_shp)
+
+## Salvar máscara em formato .tif
+
+resolucao <- 30  # exemplo: 30 metros
+raster_base <- rast(ext(mascara_shp), resolution = resolucao, crs = st_crs(mascara_shp)$wkt)
+
+# 3. Rasterizar (atribui valor 1 onde existe polígono, NA fora)
+mascara_raster <- rasterize(vect(mascara_shp), raster_base, field = 1)
+
+# 4. Exportar para GeoTIFF
+writeRaster(mascara_raster, "mascara_desmatamento_prodes.tif", overwrite = TRUE)
 
 ## Mapa da máscara no ggplot2
 
@@ -467,6 +483,10 @@ mascara_raster <- terra::rasterize(
   mapa_class_final,
   field = 1
 )
+
+class(mascara_raster)
+
+writeRaster(mascara_raster, "mapa_com_mascara_2.tif", overwrite = TRUE)
 
 # Definir a máscara NA como valor 3
 
@@ -497,6 +517,11 @@ mascara_shp <- st_transform(mascara_shp, crs(mapa_class_final))
 # Esta função irá atribuir NA a todos os pixels que estão dentro da geometria da máscara
 
 mapa_com_mascara <- mask(mapa_class_final, mascara_shp, inverse = TRUE)
+
+class(mapa_com_mascara)
+
+# Salvar como GeoTIFF
+writeRaster(mapa_com_mascara, "mapa_com_mascara.tif", overwrite = TRUE)
 
 # Agora, o mapa 'mapa_com_mascara' contém os valores classificados
 # apenas para as áreas fora da sua máscara.
@@ -533,7 +558,7 @@ tempdir_r <- "map_classificado_2B"
 dir.create(tempdir_r, showWarnings = FALSE)
 getwd() # O diretório deve apresentar a pasta acima criada
 
-# Gerar cubo do mapa classificado
+# Gerar cubo do mapa classificado ----------------------
 
 cubo_class_2B <- sits_cube(
   source = "BDC",
@@ -557,35 +582,79 @@ sits_colors_set(tibble(
 # Visualizar mapa 
 
 plot(cubo_class_2B, 
-     legend_text_size = 0.7, legend_position = "outside")
+     legend_text_size = 0.7, 
+     legend_position = "outside",
+     scale = 1.0)
 
 class(cubo_class_2B)
 
-# Mapa equivalente no ggplot
+# Gerar cubo da máscara PRODES ----------------------
 
-library(ggplot2)
+tempdir_r <- "cl_reclassification_2B"
+dir.create(tempdir_r, showWarnings = FALSE)
+getwd()
 
-# Vamos supor que cubo_class_2B tem colunas: x, y e class
-names(cubo_class_2B)
-# Ajuste se o nome da coluna da classe for diferente:
-# names(cubo_class_2B)[3] <- "class"
+## Verificar imagem da máscara
 
-library(stars)
-library(ggplot2)
+library(terra)
 
-# Converter para stars (se o pacote cubeR ou equivalentes suportar)
-# Extrair cubo como data.frame com coordenadas e valores
-cubo_df <- as.data.frame(cubo_class_2B, cells = TRUE)
-view(cubo_df)
-# Veja os nomes das colunas para achar a variável de classe
-names(cubo_df)
+rmas <- rast("mascara_desmatamento_prodes.tif")
 
-# Criar mapa no ggplot
-ggplot() +
-  geom_raster(data = cubo_class_2B, aes(fill = factor(labels))) +
-  scale_fill_viridis_d(name = "Classe") +
-  coord_equal() +
-  theme_minimal() +
-  geom_sf(data = mascara_shp, fill = NA, 
-          color = "black", size = 0.3)
+unique(values(rmas)) # Vrificar pixls e máscara
+plot(is.na(rmas), main = "Valores NA")
+plot(rmas)
 
+# Criar uma máscara lógica onde os valores são 1 ou 2
+r_masked <- mask(r, r %in% c(1, 2, NA), maskvalue=FALSE)
+
+prodes_2020 <- sits_cube(
+  source = "BDC",
+  collection = "SENTINEL-2-16D",
+  tiles      = "034018",
+  data_dir = tempdir_r,
+  parse_info = c("product", "sensor", 
+                 "tile", "start_date", "end_date",
+                 "band", "version"),
+  bands = "class",
+  version = "v2", # Versão do mapa PRODES para não confundir com mapa classificado
+  labels = c("1" = "supressao", "2" = "veg_natural", "3" = "mascara"))
+
+view(prodes_2020$labels)
+
+# Validação do modelo ----------------------------------------------------------------------------------------------
+
+### Amostras limpas
+
+set.seed(22888) # Gera o mesmo resultado da validação a cada rodada
+
+rfor_valid_tile034018_entorno <- sits_kfold_validate(
+  samples    = samples_clean_tile034018_entorno_g4_2b,
+  folds      = 5, 
+  ml_method  = sits_rfor(),
+  multicores = 5
+)
+
+rfor_valid_tile034018_entorno
+
+# Mapa de incerteza ------------------------------------------------------------------------------------------------------------------------
+
+tempdir_r <- "mapa_incerteza_tile034018_entorno"
+dir.create(tempdir_r, showWarnings = FALSE, recursive = TRUE)
+
+map_incerteza_tile034018_entorno <- sits_uncertainty(
+  cube = mosaico_proba_tile034018_entorno, # Arquivo do cubo de probabilidades, resultado da sits_classify()
+  type = "margin",
+  output_dir = tempdir_r,
+  memsize = 12,
+  multicores = 4,
+  progress = TRUE)
+
+## Salvar dados do mapa de incerteza
+
+saveRDS(map_incerteza_tile034018_entorno, file = "map_incerteza_tile034018_entorno.rds")
+map_incerteza_tile034018_entorno <- readRDS("map_incerteza_tile034018_entorno.rds")
+
+plot(map_incerteza_tile034018_entorno, 
+     palette = "PRGn",
+     legend_position = "outside",
+     scale = 1.0)
