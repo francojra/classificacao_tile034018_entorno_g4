@@ -380,9 +380,9 @@ smooth_tile034018_entorno <- sits_smooth(
 
 p_sm <- plot(smooth_tile034018_entorno)
 
-p_sm + tm_raster(col = "probs",
-                   palette = "Greens",
-                   title = "")
+p_sm + tm_raster(fill = "probs",
+                   palette = "Greys") 
+  
 
 ## Salvar dados do cubo suavizado
 
@@ -468,7 +468,7 @@ mapa_completo[!is.na(mascara_raster)] <- 3  # 3 = máscara PRODES
 
 tm_shape(mapa_completo) +
   tm_raster(
-    palette = c("#a50026", "#006837", "gray10"),
+    palette = c("#dfc27d", "#003c30", "gray10"),
     labels = c("Desmatamento 2020", "Vegetação natural", "Máscara PRODES de desmatamento 2000-2019"),
     title = "Classes"
   ) +
