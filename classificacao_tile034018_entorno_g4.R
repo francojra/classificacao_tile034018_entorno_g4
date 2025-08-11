@@ -108,10 +108,13 @@ cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
 saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "cubo_samples_tile034018_entorno_g4_2b.rds") 
 cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b.rds")
 
+view(cubo_samples_tile034018_entorno_g4_2b)
 sits_bands(cubo_samples_tile034018_entorno_g4_2b)
 sits_labels(cubo_samples_tile034018_entorno_g4_2b)
 
 # Visualizar padrões de séries temporais de cada classe -------------------
+
+### Filtrar por tiles
 
 padroes_ts_samples_tile034018_entorno_g4_2b <- sits_patterns(cubo_samples_tile034018_entorno_g4_2b) # Média harmônica das séries temporais com curva suavizada
 view(padroes_ts_samples_tile034018_entorno_g4_2b$time_series[[1]])
@@ -125,18 +128,34 @@ labels_personalizados <- c(
   "supressao" = "Supressão"
 )
 
-p + geom_line(linewidth = 1.2) + 
-  theme_bw() +
-  facet_wrap(~label, labeller = labeller(label = labels_personalizados))
+# Passo 1: garantir que a tabela interna seja desaninhada
+df_exp <- padroes_ts_samples_tile034018_entorno_g4_2b %>%
+  tidyr::unnest(time_series)  # transforma lista de tibbles em linhas reais
 
-p <- ggplot(padroes_ts_samples_tile034018_entorno_g4_2b$time_series, 
-            aes(x = time, y = values, label = label)) +
+# Conferir se virou tibble plano
+print(df_exp)
+
+# Passo 2: reorganizar bandas em uma coluna
+df_long <- df_exp %>%
+  #select(label, Index, B11, DBSI, NDII, NDVI) %>%
+  pivot_longer(
+    cols = c(B11, DBSI, NDII, NDVI),
+    names_to = "indice",
+    values_to = "valor"
+  )
+
+p <- ggplot(df_long, aes(x = Index, y = valor, color = indice)) +
   geom_line(linewidth = 1.2) +
   theme_bw() +
   facet_wrap(~ label, labeller = labeller(label = c(
     "veg_natural" = "Vegetação Natural",
-    "supressao" = "Área Suprimida"
-  )))
+    "supressao" = "Supressão"
+  ))) +
+  labs(x = "Data", y = "Valor", color = "Bandas") +
+  theme(axis.text = element_text(color = "black"),
+        axis.text.x = element_text(hjust = 1, angle = 60))
+
+p
 
 # Balanceamento de amostras ----------------------------------------------------------------------------------------------------------------
 
@@ -203,8 +222,12 @@ view(samples_filt_tile034018_entorno_g4_2b)
 
 all_samples_tile034018_entorno_g4_2b <- sits_som_clean_samples(som_map = som_cluster_tile034018_entorno_g4_2b, 
                                                 keep = c("clean", "analyze", "remove"))
-plot(all_samples_tile034018_entorno_g4_2b)
+p_ruid <- plot(all_samples_tile034018_entorno_g4_2b)
 summary(all_samples_tile034018_entorno_g4_2b) # Mesma quantidade de amostras balanceadas
+
+p_ruid + theme(axis.text = element_text(color = "black")) +
+  scale_y_discrete(labels = c("veg_natural" = "Vegetação Natural",
+                              "supressao" = "Supressão"))
 
 # Remover amostras ruidosas ----------------------------------------------------------------------------------------------------------------
 
@@ -215,7 +238,11 @@ samples_clean_tile034018_entorno_g4_2b <-
 view(samples_clean_tile034018_entorno_g4_2b)
 view(samples_clean_tile034018_entorno_g4_2b$time_series)
 
-plot(samples_clean_tile034018_entorno_g4_2b)
+p_clean <- plot(samples_clean_tile034018_entorno_g4_2b)
+
+p_clean + theme(axis.text = element_text(color = "black")) +
+  scale_y_discrete(labels = c("veg_natural" = "Vegetação Natural",
+                              "supressao" = "Supressão"))
 
 summary(samples_clean_tile034018_entorno_g4_2b) # Nova quantidade de amostras entre as classes
 
@@ -252,13 +279,17 @@ avaliacao_som_limpo_tile034018_entorno_g4_2b <- sits_som_evaluate_cluster(som_cl
 
 p1 <- plot(avaliacao_som_tile034018_entorno_g4_2b)
 p1 + theme(axis.text = element_text(color = "black"),
-           legend.position = "top", title = element_blank())
+           legend.position = "top", title = element_blank()) +
+  scale_y_discrete(labels = c("veg_natural" = "Vegetação Natural",
+                              "supressao" = "Supressão"))
 
 avaliacao_som_tile034018_entorno_g4_2b
 
 p2 <- plot(avaliacao_som_limpo_tile034018_entorno_g4_2b)
 p2 + theme(axis.text = element_text(color = "black"),
-           legend.position = "top", title = element_blank())
+           legend.position = "top", title = element_blank()) +
+  scale_y_discrete(labels = c("veg_natural" = "Vegetação Natural",
+                              "supressao" = "Supressão"))
 
 avaliacao_som_limpo_tile034018_entorno_g4_2b
 
@@ -267,6 +298,12 @@ avaliacao_som_limpo_tile034018_entorno_g4_2b
 # Leitura de dados para classificação ------------------------------------------------------------------------------------------------------
 
 cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b.rds")
+
+view(cubo_tile034018_entorno_g4_2b)
+
+c_033018 <- cubo_tile034018_entorno_g4_2b[1, ]
+
+view(c_033018)
 
 # Treinar modelo Random Forest -------------------------------------------------------------------------------------------------------------
 
@@ -341,7 +378,11 @@ smooth_tile034018_entorno <- sits_smooth(
   output_dir = "mosaico_prob_suav_tile034018_entorno"
 )
 
-plot(smooth_tile034018_entorno)
+p_sm <- plot(smooth_tile034018_entorno)
+
+p_sm + tm_raster(col = "probs",
+                   palette = "Greens",
+                   title = "")
 
 ## Salvar dados do cubo suavizado
 
@@ -360,6 +401,13 @@ map_class_tile034018_entorno <- sits_label_classification(
   multicores = 7, 
 )
 
+## Salvar dados do cubo suavizado
+
+saveRDS(map_class_tile034018_entorno, file = "map_class_tile034018_entorno.rds")
+map_class_tile034018_entorno <- readRDS("map_class_tile034018_entorno.rds")
+
+view(map_class_tile034018_entorno)
+
 ## Definir cores das classes
 
 sits_colors_set(tibble(
@@ -367,6 +415,7 @@ sits_colors_set(tibble(
   color = c("#dfc27d", "#003c30")))
 
 plot(map_class_tile034018_entorno)
+class(map_class_tile034018_entorno)
 
 ## Salvar dados do cubo classificado
 
@@ -395,6 +444,8 @@ plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está
 # Carregar o seu shapefile de máscara
 
 mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
+
+class(mascara_shp)
 
 plot(mascara_shp)
 
@@ -457,4 +508,77 @@ cores_com_mascara <- c("#a50026", "#006837", "gray10")
 plot(mapa_plot, col = cores_com_mascara, 
                 legend = FALSE, 
                 axes = FALSE, box = FALSE)
+
+# Adicionar máscara com Reclassificação do SITS ---------------------------
+
+# Configurações e pacotes ------------------------------------------------------------------------------------------------------------------
+
+library(torch)
+torch::install_torch()
+library(luz)
+library(sits)
+#library(sitsdata)
+library(tibble)
+
+# Estabelecer diretório dos mapas classificado e PRODES
+
+tempdir_r <- "map_classificado_2B"
+dir.create(tempdir_r, showWarnings = FALSE)
+getwd() # O diretório deve apresentar a pasta acima criada
+
+# Gerar cubo do mapa classificado
+
+cubo_class_2B <- sits_cube(
+  source = "BDC",
+  collection = "SENTINEL-2-16D",
+  data_dir = tempdir_r, # A imagem classificada deve estar nesta pasta
+  parse_info = c("satellite", "sensor", 
+                 "tile", "start_date", "end_date",
+                 "band", "version"),
+  bands = "class",
+  labels = c("1" = "supressao", # Definir os pixels da imagem
+             "2" = "veg_natural"))
+
+view(cubo_class_2B)
+
+## Definir cores das classes
+
+sits_colors_set(tibble(
+  name = c("supressao", "veg_natural"),
+  color = c("#bf812d", "#01665e")))
+
+# Visualizar mapa 
+
+plot(cubo_class_2B, 
+     legend_text_size = 0.7, legend_position = "outside")
+
+class(cubo_class_2B)
+
+# Mapa equivalente no ggplot
+
+library(ggplot2)
+
+# Vamos supor que cubo_class_2B tem colunas: x, y e class
+names(cubo_class_2B)
+# Ajuste se o nome da coluna da classe for diferente:
+# names(cubo_class_2B)[3] <- "class"
+
+library(stars)
+library(ggplot2)
+
+# Converter para stars (se o pacote cubeR ou equivalentes suportar)
+# Extrair cubo como data.frame com coordenadas e valores
+cubo_df <- as.data.frame(cubo_class_2B, cells = TRUE)
+view(cubo_df)
+# Veja os nomes das colunas para achar a variável de classe
+names(cubo_df)
+
+# Criar mapa no ggplot
+ggplot() +
+  geom_raster(data = cubo_class_2B, aes(fill = factor(labels))) +
+  scale_fill_viridis_d(name = "Classe") +
+  coord_equal() +
+  theme_minimal() +
+  geom_sf(data = mascara_shp, fill = NA, 
+          color = "black", size = 0.3)
 
