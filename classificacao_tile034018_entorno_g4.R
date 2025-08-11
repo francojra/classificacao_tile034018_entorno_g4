@@ -449,6 +449,13 @@ class(mascara_shp)
 
 plot(mascara_shp)
 
+## Mapa da máscara no ggplot2
+
+ggplot() +
+  geom_sf(data = mascara_shp, fill = "black", 
+          color = "black", size = 0.3) +
+  theme_minimal()
+
 # Adicionar máscara usando tmap (estático) ----------------------------------------------------------------------------------------------------
 
 library(tmap)
@@ -468,7 +475,7 @@ mapa_completo[!is.na(mascara_raster)] <- 3  # 3 = máscara PRODES
 
 tm_shape(mapa_completo) +
   tm_raster(
-    palette = c("#dfc27d", "#003c30", "gray10"),
+    palette = c("#dfc27d", "#003c30", "gray1"),
     labels = c("Desmatamento 2020", "Vegetação natural", "Máscara PRODES de desmatamento 2000-2019"),
     title = "Classes"
   ) +
@@ -503,7 +510,7 @@ mapa_plot <- mapa_com_mascara
 
 mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
 
-cores_com_mascara <- c("#a50026", "#006837", "gray10")
+cores_com_mascara <- c("#dfc27d", "#003c30", "gray1")
 
 plot(mapa_plot, col = cores_com_mascara, 
                 legend = FALSE, 
