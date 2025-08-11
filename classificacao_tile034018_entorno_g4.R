@@ -600,12 +600,12 @@ library(terra)
 
 rmas <- rast("mascara_desmatamento_prodes.tif")
 
-unique(values(rmas)) # Vrificar pixls e máscara
-plot(is.na(rmas), main = "Valores NA")
-plot(rmas)
+unique(values(rmas)) # Verificar pixels e máscara
+plot(is.na(rmas))
+plot(rmas) # O valor de pixel 1 é a máscara
 
 # Criar uma máscara lógica onde os valores são 1 ou 2
-r_masked <- mask(r, r %in% c(1, 2, NA), maskvalue=FALSE)
+# r_masked <- mask(r, r %in% c(1, 2, NA), maskvalue=FALSE)
 
 prodes_2020 <- sits_cube(
   source = "BDC",
@@ -617,7 +617,7 @@ prodes_2020 <- sits_cube(
                  "band", "version"),
   bands = "class",
   version = "v2", # Versão do mapa PRODES para não confundir com mapa classificado
-  labels = c("1" = "supressao", "2" = "veg_natural", "3" = "mascara"))
+  labels = c("1" = "mascara"))
 
 view(prodes_2020$labels)
 
