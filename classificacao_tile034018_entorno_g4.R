@@ -510,7 +510,7 @@ mapa_plot <- mapa_com_mascara
 
 mapa_plot[is.na(mapa_plot)] <- 3  # Classe 3 = máscara
 
-cores_com_mascara <- c("#dfc27d", "#003c30", "gray1")
+cores_com_mascara <- c("#dfc27d", "#003c30")
 
 plot(mapa_plot, col = cores_com_mascara, 
                 legend = FALSE, 
