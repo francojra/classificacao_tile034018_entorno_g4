@@ -647,12 +647,12 @@ getwd()
 reclas_2020_2B <- sits_reclassify(
   cube = cubo_class_2B,
   mask = prodes_2020_2B,
-  rules = list("vegetação natural" = mask == "veg_natural",
-               "supressao 2000 - 2019" = mask == "supressao",
+  rules = list("Supressao 2000 - 2019" = mask == "1",
+               "supressao 2000 - 2019" = mask == "mascara",
                "supressao 2020" = cube == "supressao"),
   multicores = 1,
   output_dir = tempdir_r,
-  version = "reclass_final2")
+  version = "reclass_final_2B")
 
 plot(reclas_2020_2B,
      legend_text_size = 0.85)
