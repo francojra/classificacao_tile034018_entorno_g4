@@ -622,7 +622,7 @@ view(r_masked)
 
 list.files(tempdir_r, pattern = "\\.tif$", full.names = FALSE)
 
-prodes_2020 <- sits_cube(
+prodes_2020_2B <- sits_cube(
   source = "BDC",
   collection = "SENTINEL-2-16D",
   tiles      = "034018",
@@ -634,19 +634,19 @@ prodes_2020 <- sits_cube(
   version = "v22", # Versão do mapa PRODES para não confundir com mapa classificado
   labels = c("1" = "mascara", "2" = "NA")) # 
 
-view(prodes_2020$labels)
+view(prodes_2020_2B$labels)
 
-plot(prodes_2020)
+plot(prodes_2020_2B)
 
 # Junção do mapa classificado com a máscara PRODES - Reclassificação ---------------------
 
-tempdir_r <- "cl_reclassification"
+tempdir_r <- "cl_reclassification_2B"
 dir.create(tempdir_r, showWarnings = FALSE)
 getwd()
 
-caatinga_rec_2020 <- sits_reclassify(
-  cube = caatinga_class,
-  mask = prodes_2020,
+reclas_2020_2B <- sits_reclassify(
+  cube = cubo_class_2B,
+  mask = prodes_2020_2B,
   rules = list("vegetação natural" = mask == "veg_natural",
                "supressao 2000 - 2019" = mask == "supressao",
                "supressao 2020" = cube == "supressao"),
@@ -654,7 +654,7 @@ caatinga_rec_2020 <- sits_reclassify(
   output_dir = tempdir_r,
   version = "reclass_final2")
 
-plot(caatinga_rec_2020,
+plot(reclas_2020_2B,
      legend_text_size = 0.85)
 
 # Validação do modelo ----------------------------------------------------------------------------------------------
