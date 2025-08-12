@@ -7,20 +7,6 @@
 
 ## Pacotes SITS
 
-library(tibble) # Pacote para visualizar tabelas
-library(sits) # Pacote para análises de séries temporais de imagens de satélite
-#library(sitsdata) # Pacote para obter conjunto de dados de amostras
-library(kohonen) # Pacote para plotar o mapa SOM
-library(randomForestExplainer) # Gerar modelo Random Forest
-
-## Pacotes para leitura da máscara
-
-library(tidyverse)
-library(st)
-library(sf)
-library(terra)
-library(tmap)
-
 # Estabelecer diretório de trabalho  -------------------------------------------------------------------------------------------------------
 
 ## Estabelecer um diretório de trabalho (pasta do computador com seus arquivos)
@@ -442,8 +428,9 @@ plot(mapa_class_final)
 class(mapa_class_final)
 view(mapa_class_final)
 
-unique(values(mapa_class_final)) # Verificar pixels 
+unique(values(mapa_class_final)) # Verificar pixels 1 e 2
 plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está fora de todos os tiles
+plot(!is.na(mapa_class_final), main = "Pixels 1 e 2")
 
 # Carregar o seu shapefile de máscara
 
@@ -647,14 +634,18 @@ getwd()
 reclas_2020_2B <- sits_reclassify(
   cube = cubo_class_2B,
   mask = prodes_2020_2B,
-  rules = list("supressao 2000 - 2019" = mask == "mascara",
-               "supressao 2020" = cube == "supressao",
+  rules = list("Máscara PRODES 2000 - 2019" = mask == "mascara",
+               "Supressao 2020" = cube == "supressao",
                "Vegetação natural" = cube == "veg_natural"),
   multicores = 7,
   output_dir = tempdir_r,
   version = "reclass_final_2B")
 
-plot(reclas_2020_2B_1,
+sits_colors_set(tibble(
+  name = c("Supressao 2020", "Vegetação natural", "Máscara PRODES 2000 - 2019"),
+  color = c("#bf812d", "#01665e", "white")))
+
+plot(reclas_2020_2B,
      legend_text_size = 0.85)
 
 # Validação do modelo ----------------------------------------------------------------------------------------------
