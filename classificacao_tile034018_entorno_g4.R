@@ -620,6 +620,8 @@ plot(r_masked) # O valor de pixel 1 é a máscara e 2 é NA (sem informação)
 names(r_masked)
 view(r_masked)
 
+list.files(tempdir_r, pattern = "\\.tif$", full.names = FALSE)
+
 prodes_2020 <- sits_cube(
   source = "BDC",
   collection = "SENTINEL-2-16D",
@@ -633,6 +635,27 @@ prodes_2020 <- sits_cube(
   labels = c("1" = "mascara", "2" = "NA")) # 
 
 view(prodes_2020$labels)
+
+plot(prodes_2020)
+
+# Junção do mapa classificado com a máscara PRODES - Reclassificação ---------------------
+
+tempdir_r <- "cl_reclassification"
+dir.create(tempdir_r, showWarnings = FALSE)
+getwd()
+
+caatinga_rec_2020 <- sits_reclassify(
+  cube = caatinga_class,
+  mask = prodes_2020,
+  rules = list("vegetação natural" = mask == "veg_natural",
+               "supressao 2000 - 2019" = mask == "supressao",
+               "supressao 2020" = cube == "supressao"),
+  multicores = 1,
+  output_dir = tempdir_r,
+  version = "reclass_final2")
+
+plot(caatinga_rec_2020,
+     legend_text_size = 0.85)
 
 # Validação do modelo ----------------------------------------------------------------------------------------------
 
