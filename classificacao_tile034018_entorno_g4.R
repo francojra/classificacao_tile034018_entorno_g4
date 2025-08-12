@@ -654,7 +654,7 @@ reclas_2020_2B <- sits_reclassify(
   output_dir = tempdir_r,
   version = "reclass_final_2B")
 
-plot(reclas_2020_2B,
+plot(reclas_2020_2B_1,
      legend_text_size = 0.85)
 
 # Validação do modelo ----------------------------------------------------------------------------------------------
