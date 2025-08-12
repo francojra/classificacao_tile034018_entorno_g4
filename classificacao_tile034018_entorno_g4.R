@@ -24,7 +24,7 @@ getwd()
 cubo_tile_034018_entorno <- sits_cube(
   source     = "BDC", # Fonte dos cubos de dados
   collection = "SENTINEL-2-16D", # Coleção de imagens
-  tiles      = c("034018", "035018", "034017", "033018"), # Região definida pelo Tile
+  tiles      = c("034018", "035018", "034017", "033018"), # Regiões de ineteresse
   start_date = "2020-01-01", # Data inicial 
   end_date   = "2020-12-31") # Data final (período de 1 ano)
 
@@ -634,16 +634,15 @@ getwd()
 reclas_2020_2B <- sits_reclassify(
   cube = cubo_class_2B,
   mask = prodes_2020_2B,
-  rules = list("Máscara PRODES 2000 - 2019" = mask == "mascara",
-               "Supressao 2020" = cube == "supressao",
+  rules = list("Supressao 2020" = cube == "supressao",
                "Vegetação natural" = cube == "veg_natural"),
   multicores = 7,
   output_dir = tempdir_r,
-  version = "reclass_final_2B")
+  version = "reclass_final_2B1")
 
 sits_colors_set(tibble(
-  name = c("Supressao 2020", "Vegetação natural", "Máscara PRODES 2000 - 2019"),
-  color = c("#bf812d", "#01665e", "white")))
+  name = c("Máscara PRODES 2000 - 2019", "Vegetação natural", "Supressao 2020"),
+  color = c("white", "#01665e", "#bf812d")))
 
 plot(reclas_2020_2B,
      legend_text_size = 0.85)
