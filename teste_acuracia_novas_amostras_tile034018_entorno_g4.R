@@ -122,13 +122,13 @@ plot(rf_model_tiles_entorno_2b)
 
 # Validação do modelo -----------------------------------------------------
 
-set.seed(22888) # Gera o mesmo resultado da validação a cada rodada
+set.seed(333) # Gera o mesmo resultado da validação a cada rodada
 
-rfor_valid_tile034018_entorno <- sits_kfold_validate(
-  samples    = samples_clean_tile034018_entorno_g4_2b,
+rfor_valid_tiles_entorno_2b <- sits_kfold_validate(
+  samples    = test,
   folds      = 5, 
   ml_method  = sits_rfor(),
   multicores = 5
 )
 
-rfor_valid_tile034018_entorno
+rfor_valid_tiles_entorno_2b
