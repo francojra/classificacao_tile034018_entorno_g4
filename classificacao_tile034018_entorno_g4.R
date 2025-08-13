@@ -5,6 +5,17 @@
 
 # Carregar pacotes -------------------------------------------------------------------------------------------------------------------------
 
+library(tibble) # Pacote para visualizar tabelas
+library(sits) # Pacote para análises de séries temporais de imagens de satélite
+#library(sitsdata) # Pacote para obter conjunto de dados de amostras
+library(kohonen) # Pacote para plotar o mapa SOM
+library(randomForestExplainer)
+# library(torch)
+# torch::install_torch()
+library(tidyverse)
+library(terra)
+library(raster)
+
 ## Pacotes SITS
 
 # Estabelecer diretório de trabalho  -------------------------------------------------------------------------------------------------------
@@ -724,3 +735,4 @@ mascara_shp <- st_transform(mascara_shp, crs(mapa_incert_final))
 
 mapa_com_mascara <- mask(mapa_incert_final, mascara_shp, inverse = TRUE)
 
+map_incert_com_masc <- plot(mapa_com_mascara)
