@@ -696,11 +696,11 @@ library(sf) # para ler shapefiles
 
 # Carregar o seu mapa classificado (já no mosaico final)
 
-mapa_class_final <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_margin_v1.tif")
+mapa_incert_final <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_margin_v1.tif")
 
-plot(mapa_class_final)
-class(mapa_class_final)
-view(mapa_class_final)
+plot(mapa_incert_final)
+class(mapa_incert_final)
+view(mapa_incert_final)
 
 unique(values(mapa_class_final)) # Verificar pixels 1 e 2
 plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está fora de todos os tiles
@@ -715,3 +715,12 @@ class(mascara_shp)
 view(mascara_shp)
 
 plot(mascara_shp)
+
+## Reprojetar a máscara para o CRS do raster
+
+mascara_shp <- st_transform(mascara_shp, crs(mapa_incert_final))
+
+# Esta função irá atribuir NA a todos os pixels que estão dentro da geometria da máscara
+
+mapa_com_mascara <- mask(mapa_incert_final, mascara_shp, inverse = TRUE)
+
