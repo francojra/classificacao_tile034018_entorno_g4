@@ -16,8 +16,6 @@ library(tidyverse)
 library(terra)
 library(raster)
 
-## Pacotes SITS
-
 # Estabelecer diretório de trabalho  -------------------------------------------------------------------------------------------------------
 
 ## Estabelecer um diretório de trabalho (pasta do computador com seus arquivos)
