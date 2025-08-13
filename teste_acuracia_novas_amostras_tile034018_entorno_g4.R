@@ -36,6 +36,8 @@ amostras_novas <- sf::read_sf("Novas_Amostras_Tiles33018_34017_35018.shp")
 view(amostras_t034018)
 view(amostras_novas)
 
+unique(is.na(amostras_novas))
+
 # Selecionar apenas tiles do entorno --------------------------------------
 
 tiles_entorno_t034018 <- sits_select(data = cubo_tile034018_entorno_g4_2b,
@@ -56,9 +58,77 @@ cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
 
 ## Salvar cubo com amostras
 
-saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "cubo_samples_tile034018_entorno_g4_2b.rds") 
-cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b.rds")
+saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "tiles_entorno_t034018_2b.rds") 
+tiles_entorno_t034018_2b <- readRDS("tiles_entorno_t034018_2b.rds")
 
-view(cubo_samples_tile034018_entorno_g4_2b)
-sits_bands(cubo_samples_tile034018_entorno_g4_2b)
-sits_labels(cubo_samples_tile034018_entorno_g4_2b)
+view(tiles_entorno_t034018_2b)
+sits_bands(tiles_entorno_t034018_2b)
+sits_labels(tiles_entorno_t034018_2b)
+
+summary(tiles_entorno_t034018_2b)
+
+# Visualizar padrões de séries temporais de cada classe -------------------
+
+
+# Balanceamento de amostras -----------------------------------------------
+
+
+# Gerar SOM ---------------------------------------------------------------
+
+
+# Gerar mapa SOM ----------------------------------------------------------
+
+
+# Detectar ruídos das amostras --------------------------------------------
+
+
+# Remover amostras ruidosas -----------------------------------------------
+
+
+# Ver diferenças na quantidade de amostras antes e após filtragem ---------
+
+
+# Ver diferenças na quantidade de amostras antes e após filtragem ---------
+
+
+# Gerar SOM dos dados sem ruídos ------------------------------------------
+
+
+# Avaliar matriz de confusão das amostras antes e após limpeza ------------
+
+
+# Classificações ----------------------------------------------------------
+
+
+# Treinar modelo Random Forest --------------------------------------------
+
+## Retirar NA da tabela de novas amostras
+
+view(tiles_entorno_t034018_2b)
+class(tiles_entorno_t034018_2b)
+test <- tiles_entorno_t034018_2b[-339, ]
+view(test)
+class(test)
+
+set.seed(2222)
+
+rf_model_tiles_entorno_2b <- sits_train(
+  samples = test, # amostras originais
+  ml_method = sits_rfor()) # Modelo Random Forest
+
+## Gráfico com as variávies mais importantes do modelo
+
+plot(rf_model_tiles_entorno_2b)
+
+# Validação do modelo -----------------------------------------------------
+
+set.seed(22888) # Gera o mesmo resultado da validação a cada rodada
+
+rfor_valid_tile034018_entorno <- sits_kfold_validate(
+  samples    = samples_clean_tile034018_entorno_g4_2b,
+  folds      = 5, 
+  ml_method  = sits_rfor(),
+  multicores = 5
+)
+
+rfor_valid_tile034018_entorno
