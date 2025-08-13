@@ -26,7 +26,7 @@ cubo_tile_034018_entorno <- sits_cube(
   collection = "SENTINEL-2-16D", # Coleção de imagens
   tiles      = c("034018", "035018", "034017", "033018"), # Regiões de ineteresse
   start_date = "2020-01-01", # Data inicial 
-  end_date   = "2020-12-31") # Data final (período de 1 ano)
+  end_date   = "2020-12-31") # Data final 
 
 sits_bands(cubo_tile_034018_entorno)
 sits_timeline(cubo_tile_034018_entorno)
@@ -587,7 +587,7 @@ getwd()
 
 library(terra)
 
-rmas <- rast("mascara_desmatamento_prodes_v22.tif")
+rmas <- rast("mascara_desmatamento_prodes.tif")
 
 unique(values(rmas)) # Verificar pixels e máscara
 plot(is.na(rmas))
@@ -633,16 +633,16 @@ getwd()
 
 reclas_2020_2B <- sits_reclassify(
   cube = cubo_class_2B,
-  mask = prodes_2020_2B,
-  rules = list("Supressao 2020" = cube == "supressao",
-               "Vegetação natural" = cube == "veg_natural"),
+  mask = "mascara_desmatamento_prodes.tif",
+  # rules = list("Vegetação natural" = cube == "supressao",
+  #             "Vegetação natural" = cube == "veg_natural"),
   multicores = 7,
   output_dir = tempdir_r,
-  version = "reclass_final_2B1")
+  version = "reclass_final_2B12")
 
 sits_colors_set(tibble(
-  name = c("Máscara PRODES 2000 - 2019", "Vegetação natural", "Supressao 2020"),
-  color = c("white", "#01665e", "#bf812d")))
+  name = c("Supressao 2020","Vegetação natural","Máscara PRODES 2000 - 2019"),
+  color = c("#bf812d", "#01665e", "white")))
 
 plot(reclas_2020_2B,
      legend_text_size = 0.85)
@@ -684,3 +684,34 @@ plot(map_incerteza_tile034018_entorno,
      palette = "PRGn",
      legend_position = "outside",
      scale = 1.0)
+
+# Adicionar máscara ao mapa de incerteza ----------------------------------
+
+# Carregar mapa classificado e shapefile da máscara
+
+library(terra) # para ler mapas .tif
+library(sf) # para ler shapefiles
+
+######### Importante estabelecer diretório antes
+
+# Carregar o seu mapa classificado (já no mosaico final)
+
+mapa_class_final <- rast("SENTINEL-2_MSI_MOSAIC_2020-01-01_2020-12-18_margin_v1.tif")
+
+plot(mapa_class_final)
+class(mapa_class_final)
+view(mapa_class_final)
+
+unique(values(mapa_class_final)) # Verificar pixels 1 e 2
+plot(is.na(mapa_class_final), main = "Valores NA") # não tem máscara, NA está fora de todos os tiles
+plot(!is.na(mapa_class_final), main = "Pixels 1 e 2")
+
+# Carregar o seu shapefile de máscara
+
+mascara_shp <- st_read("mask_rec_2019_34018_entornos_dissolv.shp")
+
+class(mascara_shp)
+
+view(mascara_shp)
+
+plot(mascara_shp)
