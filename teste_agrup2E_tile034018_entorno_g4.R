@@ -43,8 +43,8 @@ unique(amostras_t034018$Clss_gr)
 
 amostras_t034018 <- amostras_t034018 |>
   rename(c(id = fid, classe = Clss_gr)) |>
-  dplyr::select(-clss_ms) |>
-  filter(!classe %in% c("supveg_veg", "queimnada"))
+  dplyr::select(- clss_ms, - id) |>
+  filter(!classe %in% c("supveg_veg", "queimada"))
 
 view(amostras_t034018)
   
@@ -85,4 +85,5 @@ cubo_samples_tile034018_entorno_2e <- readRDS("cubo_samples_tile034018_entorno_2
 view(cubo_samples_tile034018_entorno_2e)
 sits_bands(cubo_samples_tile034018_entorno_2e)
 sits_labels(cubo_samples_tile034018_entorno_2e)
+
 
