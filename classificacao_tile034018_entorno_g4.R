@@ -10,8 +10,8 @@ library(sits) # Pacote para análises de séries temporais de imagens de satéli
 #library(sitsdata) # Pacote para obter conjunto de dados de amostras
 library(kohonen) # Pacote para plotar o mapa SOM
 library(randomForestExplainer)
-# library(torch)
-# torch::install_torch()
+library(torch)
+torch::install_torch()
 library(tidyverse)
 library(terra)
 library(raster)
@@ -301,7 +301,7 @@ view(cubo_tile034018_entorno_g4_2b)
 
 c_033018 <- cubo_tile034018_entorno_g4_2b[1, ]
 
-view(c_033018)
+view(c_033018$file_info)
 
 # Treinar modelo Random Forest -------------------------------------------------------------------------------------------------------------
 
@@ -378,14 +378,17 @@ smooth_tile034018_entorno <- sits_smooth(
 
 p_sm <- plot(smooth_tile034018_entorno)
 
+p_sm1 <- plot(smooth_tile034018_entorno, labels = "supressao")
+
 p_sm + tm_raster(fill = "probs",
                    palette = "Greys") 
   
-
 ## Salvar dados do cubo suavizado
 
 saveRDS(smooth_tile034018_entorno, file = "smooth_tile034018_entorno.rds")
 smooth_tile034018_entorno <- readRDS("smooth_tile034018_entorno.rds")
+
+view(smooth_tile034018_entorno)
 
 # Rotulando o cubo de probabilidades - Classificações finais de amostras -------------------------------------------------------------------
 
@@ -642,12 +645,13 @@ getwd()
 
 reclas_2020_2B <- sits_reclassify(
   cube = cubo_class_2B,
-  mask = "mascara_desmatamento_prodes.tif",
-  # rules = list("Vegetação natural" = cube == "supressao",
-  #             "Vegetação natural" = cube == "veg_natural"),
+  mask = prodes_2020_2B,
+  rules = list("Supressao_2019" = cube == "supressao",
+               "Vegetacao_natural" = cube == "veg_natural",
+               "Mascara_PRODES_2000-2019" = mask == "mascara"),
   multicores = 7,
   output_dir = tempdir_r,
-  version = "reclass_final_2B12")
+  version = "reclass_final_2B222")
 
 sits_colors_set(tibble(
   name = c("Supressao 2020","Vegetação natural","Máscara PRODES 2000 - 2019"),
@@ -684,14 +688,39 @@ map_incerteza_tile034018_entorno <- sits_uncertainty(
   multicores = 4,
   progress = TRUE)
 
+### Exemplo por classe
+
+map_incerteza_tile034018_entorno_c <- sits_uncertainty(
+  cube = smooth_tile034018_entorno, # Arquivo do cubo de probabilidades, resultado da sits_classify()
+  type = "margin",
+  output_dir = tempdir_r,
+  memsize = 12,
+  multicores = 4,
+  progress = TRUE)
+
+plot(map_incerteza_tile034018_entorno_c, 
+     palette = "PRGn",
+     legend_position = "outside", 
+     labels = "supressao",
+     scale = 1.0)
+
 ## Salvar dados do mapa de incerteza
 
 saveRDS(map_incerteza_tile034018_entorno, file = "map_incerteza_tile034018_entorno.rds")
 map_incerteza_tile034018_entorno <- readRDS("map_incerteza_tile034018_entorno.rds")
 
+view(map_incerteza_tile034018_entorno$file_info)
+
 plot(map_incerteza_tile034018_entorno, 
      palette = "PRGn",
-     legend_position = "outside",
+     legend_position = "outside", 
+     labels = "supressao",
+     scale = 1.0)
+
+plot(map_incerteza_tile034018_entorno, 
+     palette = "PRGn",
+     legend_position = "outside", 
+     labels = "veg_natural", 
      scale = 1.0)
 
 # Adicionar máscara ao mapa de incerteza ----------------------------------
