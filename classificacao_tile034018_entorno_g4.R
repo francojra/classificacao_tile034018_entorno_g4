@@ -647,11 +647,11 @@ reclas_2020_2B <- sits_reclassify(
   cube = cubo_class_2B,
   mask = prodes_2020_2B,
   rules = list("Mascara_PRODES_2000-2019" = mask == "mascara",
-               "Supressao_2019" = cube == "supressao",
+               #"Supressao_2019" = cube == "supressao",
                "Vegetacao_natural" = cube == "veg_natural"),
   multicores = 7,
   output_dir = tempdir_r,
-  version = "reclass_final_2B225")
+  version = "reclass_final_2B277")
 
 sits_colors_set(tibble(
   name = c("Supressao_2020","Vegetacao_natural","Mascara_PRODES_2000-2019"),

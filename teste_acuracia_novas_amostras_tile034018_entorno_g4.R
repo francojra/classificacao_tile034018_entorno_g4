@@ -12,6 +12,7 @@ library(sits) # Pacote para análises de séries temporais de imagens de satéli
 #library(sitsdata) # Pacote para obter conjunto de dados de amostras
 library(kohonen) # Pacote para plotar o mapa SOM
 library(randomForestExplainer)
+library(luz)
 library(torch)
 torch::install_torch()
 library(tidyverse)
@@ -38,5 +39,8 @@ view(amostras_t034018)
 view(amostras_novas)
 
 unique(is.na(amostras_novas))
+
+# Agrupamento de amostras -------------------------------------------------
+
 
 
