@@ -24,15 +24,11 @@ library(sf)
 
 cubo_tile_034018_entorno <- readRDS("cubo_tile_034018_entorno.rds")
 
-# Ler cubo com novos índices para grupo 4 ---------------------------------
-
-cubo_tile034018_entorno_g4_2b <- readRDS("cubo_tile034018_entorno_g4_2b.rds")
-
-view(cubo_tile034018_entorno_g4_2b)
+sits_bands(cubo_tile_034018_entorno)
 
 # Ler arquivos .shp -------------------------------------------------------
 
-amostras_t034018 <- sf::read_sf("Tile_034018_amostras_classificacao123_treinadas_manual_classes_B.shp")
+amostras_t034018 <- sf::read_sf("Tile_034018_amostras_classificacao123_treinadas_manual_classes_A2.shp")
 amostras_novas <- sf::read_sf("Novas_Amostras_Tiles33018_34017_35018.shp")
 
 view(amostras_t034018)
@@ -43,15 +39,41 @@ unique(is.na(amostras_novas))
 # Organizar arquivos de amostras com tidyverse ----------------------------
 
 amostras_t034018 <- amostras_t034018 |>
-  rename(c(id = fid, classe = classe_b)) |>
-  dplyr::select(-clss_ms) |>
-  view()
+  rename(c(id = fid, classe = Clss_gr)) |>
+  dplyr::select(-clss_ms) 
+
+view(amostras_t034018)
   
 # Unir arquivos com amostras ----------------------------------------------
 
-amostras_t034018_novas_entorno <- bind_rows(amostras_t034018, )
+amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas)
 
-# Agrupamento de amostras -------------------------------------------------
+view(amostras_t034018_novas_ams_entorno)
+class(amostras_t034018_novas_ams_entorno)
 
+readr::write_csv(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.csv")
+amostras_t034018_novas_ams_entorno <- read.csv("amostras_t034018_novas_ams_entorno.csv")
+view(amostras_t034018_novas_ams_entorno)
 
+# Adicionar amostras ao cubo ----------------------------------------------
+
+cubo_samples_tile034018_entorno_2e <- sits_get_data(
+  cubo_tile_034018_entorno, # Cubo geral com bandas e índices
+  samples = "Tile_034018_amostras_classificacao123_treinadas_manual_classes_B.shp", # Arquivo shapefile do tile 034018
+  label_attr = "classe_b", # Coluna que indica as classes das amostras (pontos)
+  bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
+            "B06",   "B07",   "B08",   "B09",   "B11",   
+            "B12", "B8A"), 
+  memsize = 15, # consumo de memória
+  multicores = 2, # Número de núcleos a serem usados. Quanto maior, mais rápido o processamento
+  progress = TRUE) # Acompanhar carregamento
+
+## Salvar cubo com amostras
+
+saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "cubo_samples_tile034018_entorno_g4_2b.rds") 
+cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b.rds")
+
+view(cubo_samples_tile034018_entorno_g4_2b)
+sits_bands(cubo_samples_tile034018_entorno_g4_2b)
+sits_labels(cubo_samples_tile034018_entorno_g4_2b)
 
