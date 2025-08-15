@@ -3,6 +3,7 @@
 # Tiles 034018, 035018, 034017, 033018 -----------------------------------------------------------------------------------------------------
 # Conjunto de classes: grupo B --------------------------------------------
 # Teste de acurácia com novas amostras em todos os tiles ------------------
+# Teste usado após classificação ------------------------------------------
 
 # Carregar pacotes -------------------------------------------------------------------------------------------------------------------------
 
@@ -11,8 +12,8 @@ library(sits) # Pacote para análises de séries temporais de imagens de satéli
 #library(sitsdata) # Pacote para obter conjunto de dados de amostras
 library(kohonen) # Pacote para plotar o mapa SOM
 library(randomForestExplainer)
-# library(torch)
-# torch::install_torch()
+library(torch)
+torch::install_torch()
 library(tidyverse)
 library(terra)
 library(raster)
@@ -38,97 +39,4 @@ view(amostras_novas)
 
 unique(is.na(amostras_novas))
 
-# Selecionar apenas tiles do entorno --------------------------------------
 
-tiles_entorno_t034018 <- sits_select(data = cubo_tile034018_entorno_g4_2b,
-                                     tiles = c("033018", "034017", "035018"))
-
-view(tiles_entorno_t034018)
-
-# Adicionar amostras ao cubo ----------------------------------------------
-
-cubo_samples_tile034018_entorno_g4_2b <- sits_get_data(
-  tiles_entorno_t034018, # Cubo geral com bandas e índices
-  samples = amostras_novas , # Arquivo shapefile do tile 034018
-  label_attr = "classe", # Coluna que indica as classes das amostras (pontos)
-  bands = c("B11", "DBSI", "NDII", "NDVI"), 
-  memsize = 15, # consumo de memória
-  multicores = 7, # Número de núcleos a serem usados. Quanto maior, mais rápido o processamento
-  progress = TRUE) # Acompanhar carregamento
-
-## Salvar cubo com amostras
-
-saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "tiles_entorno_t034018_2b.rds") 
-tiles_entorno_t034018_2b <- readRDS("tiles_entorno_t034018_2b.rds")
-
-view(tiles_entorno_t034018_2b)
-sits_bands(tiles_entorno_t034018_2b)
-sits_labels(tiles_entorno_t034018_2b)
-
-summary(tiles_entorno_t034018_2b)
-
-# Visualizar padrões de séries temporais de cada classe -------------------
-
-
-# Balanceamento de amostras -----------------------------------------------
-
-
-# Gerar SOM ---------------------------------------------------------------
-
-
-# Gerar mapa SOM ----------------------------------------------------------
-
-
-# Detectar ruídos das amostras --------------------------------------------
-
-
-# Remover amostras ruidosas -----------------------------------------------
-
-
-# Ver diferenças na quantidade de amostras antes e após filtragem ---------
-
-
-# Ver diferenças na quantidade de amostras antes e após filtragem ---------
-
-
-# Gerar SOM dos dados sem ruídos ------------------------------------------
-
-
-# Avaliar matriz de confusão das amostras antes e após limpeza ------------
-
-
-# Classificações ----------------------------------------------------------
-
-
-# Treinar modelo Random Forest --------------------------------------------
-
-## Retirar NA da tabela de novas amostras
-
-view(tiles_entorno_t034018_2b)
-class(tiles_entorno_t034018_2b)
-test <- tiles_entorno_t034018_2b[-339, ]
-view(test)
-class(test)
-
-set.seed(2222)
-
-rf_model_tiles_entorno_2b <- sits_train(
-  samples = test, # amostras originais
-  ml_method = sits_rfor()) # Modelo Random Forest
-
-## Gráfico com as variávies mais importantes do modelo
-
-plot(rf_model_tiles_entorno_2b)
-
-# Validação do modelo -----------------------------------------------------
-
-set.seed(333) # Gera o mesmo resultado da validação a cada rodada
-
-rfor_valid_tiles_entorno_2b <- sits_kfold_validate(
-  samples    = test,
-  folds      = 5, 
-  ml_method  = sits_rfor(),
-  multicores = 5
-)
-
-rfor_valid_tiles_entorno_2b
