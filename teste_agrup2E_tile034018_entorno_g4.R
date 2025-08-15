@@ -52,6 +52,9 @@ view(amostras_t034018)
 
 amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas)
 
+amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
+  dplyr::select(- id)
+
 view(amostras_t034018_novas_ams_entorno)
 class(amostras_t034018_novas_ams_entorno)
 
