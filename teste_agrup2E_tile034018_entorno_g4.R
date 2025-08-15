@@ -39,9 +39,12 @@ unique(is.na(amostras_novas))
 
 # Organizar arquivos de amostras com tidyverse ----------------------------
 
+unique(amostras_t034018$Clss_gr)
+
 amostras_t034018 <- amostras_t034018 |>
   rename(c(id = fid, classe = Clss_gr)) |>
-  dplyr::select(-clss_ms) 
+  dplyr::select(-clss_ms) |>
+  filter(!classe %in% c("supveg_veg", "queimnada"))
 
 view(amostras_t034018)
   
@@ -52,11 +55,14 @@ amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas
 view(amostras_t034018_novas_ams_entorno)
 class(amostras_t034018_novas_ams_entorno)
 
-# Exportar para um novo shapefile
-st_write(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.shp")
+# Retirar amostras NAs
 
 amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
   drop_na()
+
+# Exportar para um novo shapefile
+st_write(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.shp")
+unique(is.na(amostras_t034018_novas_ams_entorno))
 
 # Adicionar amostras ao cubo ----------------------------------------------
 
