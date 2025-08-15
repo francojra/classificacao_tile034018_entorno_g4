@@ -73,10 +73,10 @@ cubo_samples_tile034018_entorno_2e <- sits_get_data(
 
 ## Salvar cubo com amostras
 
-saveRDS(cubo_samples_tile034018_entorno_g4_2b, file = "cubo_samples_tile034018_entorno_g4_2b.rds") 
-cubo_samples_tile034018_entorno_g4_2b <- readRDS("cubo_samples_tile034018_entorno_g4_2b.rds")
+saveRDS(cubo_samples_tile034018_entorno_2e, file = "cubo_samples_tile034018_entorno_2e.rds") 
+cubo_samples_tile034018_entorno_2e <- readRDS("cubo_samples_tile034018_entorno_2e.rds")
 
-view(cubo_samples_tile034018_entorno_g4_2b)
-sits_bands(cubo_samples_tile034018_entorno_g4_2b)
-sits_labels(cubo_samples_tile034018_entorno_g4_2b)
+view(cubo_samples_tile034018_entorno_2e)
+sits_bands(cubo_samples_tile034018_entorno_2e)
+sits_labels(cubo_samples_tile034018_entorno_2e)
 
