@@ -59,13 +59,13 @@ view(amostras_t034018_novas_ams_entorno)
 
 cubo_samples_tile034018_entorno_2e <- sits_get_data(
   cubo_tile_034018_entorno, # Cubo geral com bandas e índices
-  samples = "Tile_034018_amostras_classificacao123_treinadas_manual_classes_B.shp", # Arquivo shapefile do tile 034018
+  samples = amostras_t034018_novas_ams_entorno, # Arquivo shapefile do tile 034018
   label_attr = "classe_b", # Coluna que indica as classes das amostras (pontos)
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
             "B12", "B8A"), 
   memsize = 15, # consumo de memória
-  multicores = 2, # Número de núcleos a serem usados. Quanto maior, mais rápido o processamento
+  multicores = 7, # Número de núcleos a serem usados. Quanto maior, mais rápido o processamento
   progress = TRUE) # Acompanhar carregamento
 
 ## Salvar cubo com amostras
