@@ -33,6 +33,7 @@ amostras_novas <- sf::read_sf("Novas_Amostras_Tiles33018_34017_35018.shp")
 
 view(amostras_t034018)
 view(amostras_novas)
+class(amostras_t034018)
 
 unique(is.na(amostras_novas))
 
@@ -51,16 +52,18 @@ amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas
 view(amostras_t034018_novas_ams_entorno)
 class(amostras_t034018_novas_ams_entorno)
 
-readr::write_csv(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.csv")
-amostras_t034018_novas_ams_entorno <- read.csv("amostras_t034018_novas_ams_entorno.csv")
-view(amostras_t034018_novas_ams_entorno)
+# Exportar para um novo shapefile
+st_write(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.shp")
+
+amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
+  drop_na()
 
 # Adicionar amostras ao cubo ----------------------------------------------
 
 cubo_samples_tile034018_entorno_2e <- sits_get_data(
   cubo_tile_034018_entorno, # Cubo geral com bandas e índices
-  samples = amostras_t034018_novas_ams_entorno, # Arquivo shapefile do tile 034018
-  label_attr = "classe_b", # Coluna que indica as classes das amostras (pontos)
+  samples = "amostras_t034018_novas_ams_entorno.shp", # Arquivo shapefile do tile 034018
+  label_attr = "classe", # Coluna que indica as classes das amostras (pontos)
   bands = c("B01",   "B02",   "B03",   "B04",   "B05",   
             "B06",   "B07",   "B08",   "B09",   "B11",   
             "B12", "B8A"), 
