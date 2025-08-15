@@ -648,7 +648,7 @@ reclas_2020_2B <- sits_reclassify(
   mask = prodes_2020_2B,
   rules = list("Mascara_PRODES_2000-2019" = mask == "mascara",
                "Supressao_2019" = cube == "supressao",
-               "Vegetacao_natural" = cube == "veg_natural",),
+               "Vegetacao_natural" = cube == "veg_natural"),
   multicores = 7,
   output_dir = tempdir_r,
   version = "reclass_final_2B222")
