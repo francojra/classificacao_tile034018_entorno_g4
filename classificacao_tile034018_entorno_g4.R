@@ -651,7 +651,7 @@ reclas_2020_2B <- sits_reclassify(
                "Vegetacao_natural" = cube == "veg_natural"),
   multicores = 7,
   output_dir = tempdir_r,
-  version = "reclass_final_2B222")
+  version = "reclass_final_2B225")
 
 sits_colors_set(tibble(
   name = c("Supressao_2020","Vegetacao_natural","Mascara_PRODES_2000-2019"),
