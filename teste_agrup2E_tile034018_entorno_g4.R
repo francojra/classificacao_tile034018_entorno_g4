@@ -1,25 +1,24 @@
 # Criação de cubo de dados, Self-Organizing Maps (SOM) e Classificação  --------------------------------------------------------------------
 # Teste de Amostras  -----------------------------------------------------------------------------------------------------------------------
 # Tiles 034018, 035018, 034017, 033018 -----------------------------------------------------------------------------------------------------
-# Conjunto de classes: grupo B --------------------------------------------
-# Teste de acurácia com novas amostras em todos os tiles ------------------
-# Teste usado após classificação ------------------------------------------
+# Conjunto de classes: grupo E --------------------------------------------
 
 # Carregar pacotes -------------------------------------------------------------------------------------------------------------------------
 
 library(tibble) # Pacote para visualizar tabelas
 library(sits) # Pacote para análises de séries temporais de imagens de satélite
-#library(sitsdata) # Pacote para obter conjunto de dados de amostras
+library(sitsdata) # Pacote para obter conjunto de dados de amostras do sits
 library(kohonen) # Pacote para plotar o mapa SOM
-library(randomForestExplainer)
+library(randomForestExplainer) # Pacote para treinar modelo de classificação
 library(luz)
 library(torch)
 torch::install_torch()
-library(tidyverse)
-library(terra)
-library(raster)
-library(sf)
+library(tidyverse) # Pacote para manipulação de tabelas e gráficos
+library(terra) # Pacote para manipular dados espaciais (imagens raster, dados de satélite)
+library(raster) # Pacote mais antigo para manipulação de dados raster
+library(sf) # Pacote para manipulação de dados vetoriais (pontos, linhas, polígonos)
 
+install.packages("sitsdata")
 # Ler cubo com todos os tiles ---------------------------------------------
 
 cubo_tile_034018_entorno <- readRDS("cubo_tile_034018_entorno.rds")
