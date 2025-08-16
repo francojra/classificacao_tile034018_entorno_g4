@@ -45,13 +45,18 @@ amostras_t034018 <- amostras_t034018 |>
   filter(!classe %in% c("supveg_veg", "queimada"))
 
 view(amostras_t034018)
+unique(amostras_t034018$classe)
+
+amostras_novas <- amostras_novas |>
+  dplyr::select(- id) |>
+  filter(!classe %in% c("supveg_veg", "queimada"))
+
+view(amostras_novas)
+unique(amostras_novas$classe)
   
 # Unir arquivos com amostras ----------------------------------------------
 
 amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas)
-
-amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
-  dplyr::select(- id)
 
 view(amostras_t034018_novas_ams_entorno)
 class(amostras_t034018_novas_ams_entorno)
@@ -64,6 +69,9 @@ amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
 # Exportar para um novo shapefile
 st_write(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.shp")
 unique(is.na(amostras_t034018_novas_ams_entorno))
+
+view(amostras_t034018_novas_ams_entorno)
+unique(amostras_t034018_novas_ams_entorno$classe)
 
 # Adicionar amostras ao cubo ----------------------------------------------
 
@@ -86,5 +94,8 @@ cubo_samples_tile034018_entorno_2e <- readRDS("cubo_samples_tile034018_entorno_2
 view(cubo_samples_tile034018_entorno_2e)
 sits_bands(cubo_samples_tile034018_entorno_2e)
 sits_labels(cubo_samples_tile034018_entorno_2e)
+
+# Visualizar padrões de séries temporais de cada classe ---------------------------------------------------------------------------------------------------
+
 
 
