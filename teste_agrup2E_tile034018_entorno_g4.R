@@ -10,8 +10,8 @@ library(sits) # Pacote para análises de séries temporais de imagens de satéli
 library(sitsdata) # Pacote para obter conjunto de dados de amostras do sits
 library(kohonen) # Pacote para plotar o mapa SOM
 library(randomForestExplainer) # Pacote para treinar modelo de classificação
-library(luz)
-library(torch)
+library(luz) # 
+library(torch) # Pacote para criar modelos deep learning e treinar redes neurais
 torch::install_torch()
 library(tidyverse) # Pacote para manipulação de tabelas e gráficos
 library(terra) # Pacote para manipular dados espaciais (imagens raster, dados de satélite)
