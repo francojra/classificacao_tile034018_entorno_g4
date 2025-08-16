@@ -28,9 +28,12 @@ sits_bands(cubo_tile_034018_entorno)
 
 amostras_t034018 <- sf::read_sf("Tile_034018_amostras_classificacao123_treinadas_manual_classes_A2.shp")
 amostras_novas <- sf::read_sf("Novas_Amostras_Tiles33018_34017_35018.shp")
+amostras_novas_je <- sf::read_sf("novas_amostras_jeanne.shp")
 
 view(amostras_t034018)
 view(amostras_novas)
+view(amostras_novas_je)
+
 class(amostras_t034018)
 
 unique(is.na(amostras_novas))
@@ -41,22 +44,33 @@ unique(amostras_t034018$Clss_gr)
 
 amostras_t034018 <- amostras_t034018 |>
   rename(c(id = fid, classe = Clss_gr)) |>
-  dplyr::select(- clss_ms, - id) |>
+  dplyr::select(- clss_ms, - id, -x, -y) |>
   filter(!classe %in% c("supveg_veg", "queimada"))
 
 view(amostras_t034018)
 unique(amostras_t034018$classe)
 
 amostras_novas <- amostras_novas |>
-  dplyr::select(- id) |>
+  dplyr::select(- id, -x, -y) |>
   filter(!classe %in% c("supveg_veg", "queimada"))
 
 view(amostras_novas)
 unique(amostras_novas$classe)
+
+amostras_novas_je <- amostras_novas_je |>
+  dplyr::select(- id) 
   
+view(amostras_novas_je)
+
 # Unir arquivos com amostras ----------------------------------------------
 
-amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas)
+st_crs(amostras_t034018)
+st_crs(amostras_novas)
+st_crs(amostras_novas_je)
+
+crs_alinhada <- st_transform(amostras_novas_je, st_crs(amostras_novas))
+
+amostras_t034018_novas_ams_entorno <- bind_rows(amostras_t034018, amostras_novas, crs_alinhada)
 
 view(amostras_t034018_novas_ams_entorno)
 class(amostras_t034018_novas_ams_entorno)
