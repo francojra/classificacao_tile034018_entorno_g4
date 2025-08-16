@@ -90,6 +90,8 @@ unique(is.na(amostras_t034018_novas_ams_entorno))
 view(amostras_t034018_novas_ams_entorno)
 unique(amostras_t034018_novas_ams_entorno$classe)
 
+amostras_t034018_novas_ams_entorno <- read_sf("amostras_t034018_novas_ams_entorno.shp")
+
 # Adicionar amostras ao cubo ----------------------------------------------
 
 cubo_samples_tile034018_entorno_2e <- sits_get_data(
