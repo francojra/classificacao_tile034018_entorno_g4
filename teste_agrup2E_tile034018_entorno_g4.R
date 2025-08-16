@@ -80,6 +80,9 @@ class(amostras_t034018_novas_ams_entorno)
 amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
   drop_na()
 
+amostras_t034018_novas_ams_entorno <- amostras_t034018_novas_ams_entorno |>
+  filter(classe != "veg_natual")
+
 # Exportar para um novo shapefile
 st_write(amostras_t034018_novas_ams_entorno, "amostras_t034018_novas_ams_entorno.shp")
 unique(is.na(amostras_t034018_novas_ams_entorno))
