@@ -18,7 +18,6 @@ library(terra) # Pacote para manipular dados espaciais (imagens raster, dados de
 library(raster) # Pacote mais antigo para manipulação de dados raster
 library(sf) # Pacote para manipulação de dados vetoriais (pontos, linhas, polígonos)
 
-install.packages("sitsdata")
 # Ler cubo com todos os tiles ---------------------------------------------
 
 cubo_tile_034018_entorno <- readRDS("cubo_tile_034018_entorno.rds")
